@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block subtitle %}{{ subtitle|safe }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            {{ form.title.label }}<br>
+                            {{ form.title(class='form-control') }}
+                            {% if form.errors %}
+                                <div>
+                                    {% for error in form.errors.title %}
+                                        <span class="form-error">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            {{ form.authors.label }}<br>
+                            {{ form.authors(class='form-control') }}
+                            {% if form.errors %}
+                                <div>
+                                    {% for error in form.errors.authors %}
+                                        <span class="form-error">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            {{ form.isbn.label }}<br>
+                            {{ form.isbn(class='form-control') }}
+                            {% if form.errors %}
+                                <div>
+                                    {% for error in form.errors.isbn %}
+                                        <span class="form-error">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.price.label }}<br>
+                            {{ form.price(class='form-control') }}
+                            {% if form.errors %}
+                                <div>
+                                    {% for error in form.errors.price %}
+                                        <span class="form-error">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {{ form.submit() }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

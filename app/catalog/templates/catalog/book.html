@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block subtitle %}"{{ book.title }}"{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <p>Autor: <span class="bookery-info">{{ book.authors if book.authors }}</span></p>
+        <p>ISBN: <span class="bookery-info">{{ book.isbn if book.isbn }}</span></p>
+        <p>Cena: <span class="bookery-info">{{ book.price if book.price }}</span></p>
+        <p>Data dodania: <span class="bookery-info">{{ book.inserted_at.strftime('%d-%m-%Y') }}</span></p>
+        <a class="bookery-action" href="{{ url_for('catalog.edit', book_id=book.id) }}">Edytuj książkę</a>
+        <a
+            id="bookery-delete-book-action"
+            class="bookery-action-last"
+            data-title="{{ book.title }}"
+            data-redirect="{{ url_for('catalog.index')}}"
+            href="{{ url_for('catalog.delete', book_id=book.id) }}"
+        >
+        Usuń książkę
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/delete_book_action.js') }}"></script>
+{% endblock %}

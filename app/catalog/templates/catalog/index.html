@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block subtitle %}Katalog książek{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="table-responsive-xl">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Nr</th>
+                        <th scope="col">Tytuł</th>
+                        <th scope="col">Autor</th>
+                        <th scope="col">ISBN</th>
+                        <th scope="col">Cena</th>
+                        <th scope="col">Data dodania</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books%}
+                    <tr>
+                        <th scope="row">{{ loop.index }}</th>
+                        <td><a href="{{ url_for('catalog.one', book_id=book.id) }}">{{ book.title }}</a></td>
+                        <td>{{ book.authors if book.authors }}</td>
+                        <td>{{ book.isbn if book.isbn }}</td>
+                        <td>{{ book.price if book.price }}</td>
+                        <td>{{ book.inserted_at.strftime('%d-%m-%Y') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

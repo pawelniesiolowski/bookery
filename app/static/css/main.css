@@ -1,0 +1,50 @@
+body {
+    /* From Subtle Patterns (https://www.toptal.com/designers/subtlepatterns/). Made by Craig Schwartz. */
+    background-image: url("../img/round.png");
+    font-family: 'Montserrat', sans-serif;
+}
+
+.bookery-title-container {
+    font-family: 'Playfair Display', serif;
+    padding: 2rem 0 2rem 0;
+    background-color: ghostwhite;
+    letter-spacing: 0.5rem;
+}
+
+.bookery-title {
+    text-align: center;
+}
+
+.bookery-subtitle {
+    text-align: center;
+    margin: 2rem 0 2rem 0;
+    font-size: 1.6rem;
+}
+
+.bookery-info {
+    font-weight: bold;
+}
+
+.form-error {
+    font-size: 0.9rem;
+    color: red;
+}
+
+.bookery-action {
+    margin-right: 2rem
+}
+
+.bookery-action-last {
+    margin-right: 0
+}
+
+.modal-window {
+    height: auto;
+    width: auto;
+    position: fixed;
+    background-color: white;
+    border: 1px solid black;
+    opacity: 1;
+    font-size: 1.3rem;
+    padding: 1rem;
+}
