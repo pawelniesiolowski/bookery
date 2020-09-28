@@ -1,4 +1,4 @@
-from app.catalog.models import Book
+from app.catalog.book_model import Book
 import pytest
 from decimal import Decimal
 
@@ -55,3 +55,9 @@ def test_it_raises_error_if_price_is_to_high():
 
 def test_optional_values_can_be_none():
     assert Book('Test title', authors=None, isbn=None, price=None)
+
+
+def test_it_can_be_deleted():
+    book = Book('Test Book')
+    book.delete()
+    assert book.deleted_at

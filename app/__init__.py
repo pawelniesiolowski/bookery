@@ -16,4 +16,7 @@ def create_app(config_name):
     from .catalog import catalog as catalog_blueprint
     app.register_blueprint(catalog_blueprint)
 
+    from .receiver import receiver as receiver_blueprint
+    app.register_blueprint(receiver_blueprint)
+
     return app

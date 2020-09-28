@@ -1,17 +1,19 @@
-const DeleteBookAction = (() => {
-    const init = () => {
-        const button = document.getElementById('bookery-delete-book-action');
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            const deleteHref = e.target.href;
-            const redirectHref = e.target.dataset.redirect;
-            const bookTitle = e.target.dataset.title;
-            const deleteDiv = createModalContent(deleteHref, redirectHref, bookTitle);
-            ModalWindow.init(deleteDiv);
-        });
+const DeleteAction = (() => {
+    const init = (elementId) => {
+        const button = document.getElementById(elementId);
+        if (button) {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const deleteHref = e.target.href;
+                const redirectHref = e.target.dataset.redirect;
+                const name = e.target.dataset.name;
+                const deleteDiv = createModalContent(deleteHref, redirectHref, name);
+                ModalWindow.init(deleteDiv);
+            });
+        }
     };
 
-    const createModalContent = (deleteHref, redirectHref, bookTitle) => {
+    const createModalContent = (deleteHref, redirectHref, name) => {
         const container = document.createElement('div');
         container.setAttribute('class', 'container');
 
@@ -20,7 +22,7 @@ const DeleteBookAction = (() => {
         const colDiv1 = document.createElement('div');
         colDiv1.setAttribute('class', 'col text-center');
         const text = document.createElement('p');
-        text.textContent = `Czy na pewno chcesz usunąć książkę "${bookTitle}"?`;
+        text.textContent = `Czy na pewno chcesz usunąć: ${name}?`;
         colDiv1.appendChild(text);
         rowDiv1.appendChild(colDiv1);
         container.appendChild(rowDiv1);
@@ -51,11 +53,11 @@ const DeleteBookAction = (() => {
                 if (response.status == 204) {
                     window.location.replace(redirectHref);
                 } else {
-                    throw new Error(`The book could not be deleted. Response status ${response.status}`);
+                    throw new Error(`Item could not be deleted. Response status ${response.status}`);
                 }
             })
             .catch((error) => {
-                alert('Niestety nie udało się usunąć książki');
+                alert('Niestety usunięcie nie powiodło się');
                 console.log(error);
             });
         ;
@@ -65,5 +67,3 @@ const DeleteBookAction = (() => {
         init: init
     }
 })();
-
-DeleteBookAction.init();

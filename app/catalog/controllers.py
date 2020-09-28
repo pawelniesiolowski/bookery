@@ -7,8 +7,8 @@ from . import catalog
 from .. import db
 from datetime import datetime
 from .forms import BookForm
-from .models import Book
-from .repositories import BookRepo
+from .book_model import Book
+from .book_repo import BookRepo
 
 
 @catalog.route('/')
@@ -55,10 +55,14 @@ def create():
             db.session.rollback()
             abort(500)
 
-        flash(f'Dodano książkę "{book.title}" do katalogu')
+        flash(f'Dodano książkę: {book.title}')
         return redirect(url_for('catalog.index'))
 
-    return render_template('catalog/form.html', form=form, subtitle='Dodaj książkę')
+    return render_template(
+        'catalog/form.html',
+        form=form,
+        subtitle='Dodaj książkę'
+    )
 
 
 @catalog.route('/books/<int:book_id>/form', methods=['GET', 'POST'])
@@ -84,13 +88,13 @@ def edit(book_id):
             db.session.rollback()
             abort(500)
 
-        flash(f'Zmieniono dane książki "{book.title}" w katalogu')
+        flash(f'Zmieniono dane książki: {book.title}')
         return redirect(url_for('catalog.index'))
 
     return render_template(
         'catalog/form.html',
         form=form,
-        subtitle=f'Edytuj książkę "{book.title}"'
+        subtitle=f'Edytuj książkę: {book.title}'
     )
 
 
@@ -115,5 +119,5 @@ def delete(book_id):
         db.session.rollback()
         abort(500)
 
-    flash(f'Usunięto książkę "{book.title}" z katalogu')
+    flash(f'Usunięto książkę: {book.title}')
     return '', 204

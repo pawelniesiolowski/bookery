@@ -1,4 +1,4 @@
-from .models import Book
+from .book_model import Book
 
 
 class BookRepo:

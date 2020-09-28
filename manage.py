@@ -12,4 +12,5 @@ manager.add_command('db', MigrateCommand)
 
 if __name__ == '__main__':
     from app.catalog.models import Book
+    from app.receiver.receiver import Receiver
     manager.run()

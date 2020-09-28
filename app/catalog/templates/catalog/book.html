@@ -13,7 +13,7 @@
         <a
             id="bookery-delete-book-action"
             class="bookery-action-last"
-            data-title="{{ book.title }}"
+            data-name="{{ book.title }}"
             data-redirect="{{ url_for('catalog.index')}}"
             href="{{ url_for('catalog.delete', book_id=book.id) }}"
         >
@@ -26,5 +26,6 @@
 {% block js %}
     {{ super() }}
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/delete_book_action.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/delete_action.js') }}"></script>
+    <script>DeleteAction.init('bookery-delete-book-action');</script>
 {% endblock %}

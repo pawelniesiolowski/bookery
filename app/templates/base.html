@@ -34,6 +34,12 @@
                 <div class="navbar-nav">
                     <a class="nav-item nav-link" href="{{ url_for('catalog.create') }}">Dodaj książkę</a>
                 </div>
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link" href="{{ url_for('receiver.index') }}">Użytkownicy</a>
+                </div>
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link" href="{{ url_for('receiver.create') }}">Dodaj użytkownika</a>
+                </div>
             </div>
         </nav>
         <h2 class="bookery-subtitle">{% block subtitle %}{% endblock %}</h2>

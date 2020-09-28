@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block subtitle %}Użytkownicy{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="table-responsive-xl">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Nr</th>
+                        <th scope="col">Imię i nazwisko</th>
+                        <th scope="col">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for receiver in receivers %}
+                    <tr>
+                        <th scope="row">{{ loop.index }}</th>
+                        <td>{{ receiver.name }} {{ receiver.surname }}</td>
+
+                        <td>
+                            <a class="bookery-action" href="{{ url_for('receiver.edit', receiver_id=receiver.id) }}">Edytuj</a>
+                            <a
+                                id="bookery-delete-receiver-action"
+                                class="bookery-action-last"
+                                data-name="{{ receiver.name }} {{ receiver.surname }}"
+                                data-redirect="{{ url_for('receiver.index')}}"
+                                href="{{ url_for('receiver.delete', receiver_id=receiver.id) }}"
+                            >
+                            Usuń
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/delete_action.js') }}"></script>
+    <script>DeleteAction.init('bookery-delete-receiver-action');</script>
+{% endblock %}

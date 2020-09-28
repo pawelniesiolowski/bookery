@@ -1,9 +1,9 @@
 from tests.fixture import client
-from app.catalog.models import Book
+from app.catalog.book_model import Book
 from app import db
 
 
-def test_it_gets_form(client):
+def test_it_gets_new_receiver_form(client):
     response = client.get('/books/form')
     expected_text = '<h2 class="bookery-subtitle">Dodaj książkę</h2>'
     assert response.status_code == 200
@@ -12,7 +12,7 @@ def test_it_gets_form(client):
 
 def test_it_creates_book(client):
     book = {'title': 'Test Book'}
-    expected_text = 'Dodano książkę "Test Book" do katalogu'
+    expected_text = 'Dodano książkę: Test Book'
     response = client.post('/books/form', data=book, follow_redirects=True)
     assert response.status_code == 200
     assert expected_text in response.get_data(as_text=True)
@@ -33,12 +33,12 @@ def test_it_shows_one_book(client):
     assert expected_text in response.get_data(as_text=True)
 
 
-def test_it_gets_form(client):
+def test_it_gets_edit_receiver_form(client):
     book = {'title': 'Test Book'}
     client.post('/books/form', data=book)
     response = client.get('/books/1/form')
     expected_text = '<h2 class="bookery-subtitle">\
-Edytuj książkę "Test Book"</h2>'
+Edytuj książkę: Test Book</h2>'
     assert response.status_code == 200
     assert expected_text in response.get_data(as_text=True)
 
@@ -52,7 +52,7 @@ def test_it_edits_book(client):
         data=edited_book,
         follow_redirects=True
     )
-    expected_text = 'Zmieniono dane książki "Edited Test Book" w katalogu'
+    expected_text = 'Zmieniono dane książki: Edited Test Book'
     assert response.status_code == 200
     assert expected_text in response.get_data(as_text=True)
 
