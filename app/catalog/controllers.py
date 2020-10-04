@@ -1,6 +1,6 @@
 from flask import (
     request, render_template, redirect,
-    url_for, flash, abort, current_app
+    url_for, flash, abort, current_app, jsonify
 )
 from sqlalchemy.exc import SQLAlchemyError
 from . import catalog
@@ -14,10 +14,9 @@ from .book_repo import BookRepo
 @catalog.route('/')
 def index():
     try:
-        books = BookRepo().getAllOrderedByTitle()
+        books = BookRepo().get_all_ordered_by_title()
     except SQLAlchemyError as e:
         current_app.logger.error(e)
-        db.session.rollback()
         abort(500)
 
     return render_template('catalog/index.html', books=books)
@@ -26,10 +25,9 @@ def index():
 @catalog.route('/books/<int:book_id>')
 def one(book_id):
     try:
-        book = BookRepo().getById(book_id)
+        book = BookRepo().get_by_id(book_id)
     except SQLAlchemyError as e:
         current_app.logger.error(e)
-        db.session.rollback()
         abort(500)
 
     if book is None:
@@ -68,10 +66,9 @@ def create():
 @catalog.route('/books/<int:book_id>/form', methods=['GET', 'POST'])
 def edit(book_id):
     try:
-        book = BookRepo().getById(book_id)
+        book = BookRepo().get_by_id(book_id)
     except SQLAlchemyError as e:
         current_app.logger.error(e)
-        db.session.rollback()
         abort(500)
 
     if book is None:
@@ -101,10 +98,9 @@ def edit(book_id):
 @catalog.route('/books/<int:book_id>', methods=['DELETE'])
 def delete(book_id):
     try:
-        book = BookRepo().getById(book_id)
+        book = BookRepo().get_by_id(book_id)
     except SQLAlchemyError as e:
         current_app.logger.error(e)
-        db.session.rollback()
         abort(500)
 
     if book is None:
@@ -121,3 +117,14 @@ def delete(book_id):
 
     flash(f'Usunięto książkę: {book.title}')
     return '', 204
+
+
+@catalog.route('/books/<string:title>/exists')
+def exists(title):
+    try:
+        exists = BookRepo().does_title_exist(title)
+    except SQLAlchemyError as e:
+        current_app.logger.error(e)
+        abort(500)
+
+    return jsonify({'data': exists}), 200

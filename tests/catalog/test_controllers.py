@@ -63,3 +63,19 @@ def test_it_deletes_book(client):
     response = client.delete('/books/1')
     assert response.status_code == 204
     assert Book.query.get(1).deleted_at
+
+
+def test_it_returns_true_if_book_with_given_title_exists(client):
+    book = {'title': 'Test Book'}
+    client.post('/books/form', data=book)
+    response = client.get('/books/Test Book/exists')
+    assert response.status_code == 200
+    assert response.get_json()['data'] is True
+
+
+def test_it_returns_true_if_book_with_given_title_exists(client):
+    book = {'title': 'Test Book'}
+    client.post('/books/form', data=book)
+    response = client.get('/books/Test Book 2/exists')
+    assert response.status_code == 200
+    assert response.get_json()['data'] is False
