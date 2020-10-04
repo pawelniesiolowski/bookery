@@ -69,3 +69,11 @@ def test_it_deletes_receiver(client):
     response = client.delete('/receivers/1')
     assert response.status_code == 204
     assert Receiver.query.get(1).deleted_at
+
+
+def test_it_does_not_create_receiver_that_already_exists(client):
+    receiver = {'name': 'Paweł', 'surname': 'Niesiołowski'}
+    client.post('/receivers/form', data=receiver)
+    response = client.post('/receivers/form', data=receiver)
+    expected_text = 'Użytkownik: Paweł Niesiołowski już istnieje'
+    assert expected_text in response.get_data(as_text=True)

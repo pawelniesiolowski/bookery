@@ -12,7 +12,7 @@ from .receiver_repo import ReceiverRepo
 @receiver.route('/receivers')
 def index():
     try:
-        receivers = ReceiverRepo().getAllOrderedBySurname()
+        receivers = ReceiverRepo().get_all_ordered_by_surname()
     except SQLAlchemyError as e:
         current_app.logger.error(e)
         db.session.rollback()
@@ -26,6 +26,16 @@ def create():
     form = ReceiverForm(request.form)
     if form.validate_on_submit():
         receiver = Receiver(form.name.data, form.surname.data)
+        if ReceiverRepo().does_receiver_exist(receiver):
+            flash(
+                f'Użytkownik: {receiver.name} {receiver.surname} już istnieje',
+                'error'
+            )
+            return render_template(
+                'receiver/form.html',
+                form=form,
+                subtitle='Dodaj użytkownika'
+            )
         try:
             receiver.save()
         except SQLAlchemyError as e:
@@ -46,7 +56,7 @@ def create():
 @receiver.route('/receivers/<int:receiver_id>/form', methods=['GET', 'POST'])
 def edit(receiver_id):
     try:
-        receiver = ReceiverRepo().getById(receiver_id)
+        receiver = ReceiverRepo().get_by_id(receiver_id)
     except SQLAlchemyError as e:
         current_app.logger.error(e)
         db.session.rollback()
@@ -81,7 +91,7 @@ def edit(receiver_id):
 @receiver.route('/receivers/<int:receiver_id>', methods=['DELETE'])
 def delete(receiver_id):
     try:
-        receiver = ReceiverRepo().getById(receiver_id)
+        receiver = ReceiverRepo().get_by_id(receiver_id)
     except SQLAlchemyError as e:
         current_app.logger.error(e)
         db.session.rollback()

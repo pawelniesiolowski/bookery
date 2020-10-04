@@ -15,8 +15,9 @@
 </head>
 <body>
     <div class="container-fluid">
-        {% for message in get_flashed_messages() %}
-        <div class="alert alert-success">
+        {% for category, message in get_flashed_messages(with_categories=true) %}
+        {% set class = 'alert alert-danger' if category == 'error' else 'alert alert-success' %}
+        <div class="{{ class }}">
             {{ message|safe }}
         </div>
         {% endfor %}
