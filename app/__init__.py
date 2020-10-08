@@ -19,4 +19,7 @@ def create_app(config_name):
     from .receiver import receiver as receiver_blueprint
     app.register_blueprint(receiver_blueprint)
 
+    from .bookaction import bookaction as bookaction_blueprint
+    app.register_blueprint(bookaction_blueprint)
+
     return app

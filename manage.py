@@ -11,6 +11,7 @@ manager.add_command('db', MigrateCommand)
 
 
 if __name__ == '__main__':
-    from app.catalog.models import Book
-    from app.receiver.receiver import Receiver
+    from app.catalog.book_model import Book
+    from app.receiver.receiver_model import Receiver
+    from app.bookaction.book_action_model import BookAction
     manager.run()
