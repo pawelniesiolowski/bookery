@@ -34,7 +34,8 @@ class BookAction(db.Model):
 
     @validates('copies')
     def validate_copies(self, key, value):
-        assert value and isinstance(value, int) and value > 0
+        assert value and isinstance(value, int) and value > 0,\
+            {'copies': 'Liczba egzemplarzy musi być większa od zera'}
         return value
 
     @validates('book_id')
@@ -54,7 +55,8 @@ class BookAction(db.Model):
     def validate_comment(self, key, value):
         if value is not None:
             length = len(value.encode('utf-8'))
-            assert isinstance(value, str) and length < 256
+            assert isinstance(value, str) and length < 256,\
+                {'comment': 'Komentarz musi mieć mniej niż 256 znaków'}
         return value
 
     def save(self):
