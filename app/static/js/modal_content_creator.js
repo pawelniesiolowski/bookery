@@ -1,5 +1,5 @@
 const ModalContentCreator = (() => {
-    const create = (info, buttonText, action) => {
+    const create = (info, buttonText, action, additionalDiv = '') => {
         const container = document.createElement('div');
         container.setAttribute('class', 'container');
 
@@ -12,6 +12,13 @@ const ModalContentCreator = (() => {
         colDiv1.appendChild(text);
         rowDiv1.appendChild(colDiv1);
         container.appendChild(rowDiv1);
+
+        if (additionalDiv != '') {
+            const additionalRowDiv = document.createElement('div');
+            additionalRowDiv.setAttribute('class', 'row');
+            additionalRowDiv.appendChild(additionalDiv);
+            container.appendChild(additionalRowDiv);
+        }
 
         const rowDiv2 = document.createElement('div');
         rowDiv2.setAttribute('class', 'row mt-3');

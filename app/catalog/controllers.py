@@ -9,6 +9,7 @@ from datetime import datetime
 from .forms import BookForm
 from .book_model import Book
 from .book_repo import BookRepo
+from app.bookaction.services import BookActionService
 
 
 @catalog.route('/')
@@ -33,7 +34,10 @@ def one(book_id):
     if book is None:
         abort(404)
 
-    return render_template('catalog/book.html', book=book)
+    book_action_service = BookActionService()
+    copies = book_action_service.get_copies_for_book(book_id)
+
+    return render_template('catalog/book.html', book=book, copies=copies)
 
 
 @catalog.route('/books/form', methods=['GET', 'POST'])

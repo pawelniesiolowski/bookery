@@ -31,11 +31,23 @@ body {
 }
 
 .bookery-action {
-    margin-right: 2rem
+    margin-right: 2rem;
 }
 
 .bookery-action-last {
-    margin-right: 0
+    margin-right: 0;
+}
+
+.bookery-book-action {
+    margin: 1rem 0;
+}
+
+.bookery-book-action-container {
+    margin: 2.5rem 0;
+}
+
+.bookery-book-action-title {
+    font-size: 1.3rem;
 }
 
 .modal-window {

@@ -14,16 +14,14 @@
                         <th scope="col">Akcje</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="bookery-delete-receiver-action">
                     {% for receiver in receivers %}
                     <tr>
                         <th scope="row">{{ loop.index }}</th>
                         <td>{{ receiver.name }} {{ receiver.surname }}</td>
-
                         <td>
                             <a class="bookery-action" href="{{ url_for('receiver.edit', receiver_id=receiver.id) }}">Edytuj</a>
                             <a
-                                id="bookery-delete-receiver-action"
                                 class="bookery-action-last"
                                 data-name="{{ receiver.name }} {{ receiver.surname }}"
                                 data-redirect="{{ url_for('receiver.index')}}"
@@ -44,6 +42,7 @@
 {% block js %}
     {{ super() }}
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modal_content_creator.js') }}"></script>
     <script src="{{ url_for('static', filename='js/delete_action.js') }}"></script>
     <script>DeleteAction.init('bookery-delete-receiver-action');</script>
 {% endblock %}
