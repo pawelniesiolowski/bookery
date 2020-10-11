@@ -3,15 +3,17 @@ const DeleteAction = (() => {
         const button = document.getElementById(elementId);
         if (button) {
             button.addEventListener('click', (e) => {
-                e.preventDefault();
-                const deleteHref = e.target.href;
-                const redirectHref = e.target.dataset.redirect;
-                const name = e.target.dataset.name;
-                const info = `Czy na pewno chcesz usunąć ${name}?`;
-                const buttonText = 'Usuń';
-                const action = () => deleteBook(deleteHref, redirectHref);
-                const deleteDiv = ModalContentCreator.create(info, buttonText, action);
-                ModalWindow.init(deleteDiv);
+                if (e.target.classList.contains('bookery-action-delete')) {
+                    e.preventDefault();
+                    const deleteHref = e.target.href;
+                    const redirectHref = e.target.dataset.redirect;
+                    const name = e.target.dataset.name;
+                    const info = `Czy na pewno chcesz usunąć ${name}?`;
+                    const buttonText = 'Usuń';
+                    const action = () => deleteBook(deleteHref, redirectHref);
+                    const deleteDiv = ModalContentCreator.create(info, buttonText, action);
+                    ModalWindow.init(deleteDiv);
+                }
             });
         }
     };

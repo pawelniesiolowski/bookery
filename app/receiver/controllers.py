@@ -1,18 +1,20 @@
 from flask import (
     request, render_template, redirect,
-    url_for, flash, abort, current_app
+    url_for, flash, abort, current_app, jsonify
 )
 from sqlalchemy.exc import SQLAlchemyError
 from . import receiver
 from .forms import ReceiverForm
-from .receiver_model import Receiver
-from .receiver_repo import ReceiverRepo
+from .models import Receiver
+from .repo import (
+    receivers_ordered_by_surname, receiver_by_id, does_receiver_exist
+)
 
 
-@receiver.route('/receivers')
+@receiver.route('/receivers/index')
 def index():
     try:
-        receivers = ReceiverRepo().get_all_ordered_by_surname()
+        receivers = receivers_ordered_by_surname()
     except SQLAlchemyError as e:
         current_app.logger.error(e)
         db.session.rollback()
@@ -26,7 +28,7 @@ def create():
     form = ReceiverForm(request.form)
     if form.validate_on_submit():
         receiver = Receiver(form.name.data, form.surname.data)
-        if ReceiverRepo().does_receiver_exist(receiver):
+        if does_receiver_exist(receiver):
             flash(
                 f'Użytkownik: {receiver.name} {receiver.surname} już istnieje',
                 'error'
@@ -56,7 +58,7 @@ def create():
 @receiver.route('/receivers/<int:receiver_id>/form', methods=['GET', 'POST'])
 def edit(receiver_id):
     try:
-        receiver = ReceiverRepo().get_by_id(receiver_id)
+        receiver = receiver_by_id(receiver_id)
     except SQLAlchemyError as e:
         current_app.logger.error(e)
         db.session.rollback()
@@ -91,7 +93,7 @@ def edit(receiver_id):
 @receiver.route('/receivers/<int:receiver_id>', methods=['DELETE'])
 def delete(receiver_id):
     try:
-        receiver = ReceiverRepo().get_by_id(receiver_id)
+        receiver = receiver_by_id(receiver_id)
     except SQLAlchemyError as e:
         current_app.logger.error(e)
         db.session.rollback()
@@ -111,3 +113,19 @@ def delete(receiver_id):
 
     flash(f'Usunięto użytkownika: {receiver.name} {receiver.surname}')
     return '', 204
+
+
+@receiver.route('/receivers')
+def all():
+    try:
+        receivers = receivers_ordered_by_surname()
+    except SQLAlchemyError as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        abort(500)
+
+    data = [receiver.format() for receiver in receivers]
+    return jsonify({
+        'status': 200,
+        'data': data
+    }), 200

@@ -1,4 +1,4 @@
-from app.catalog.book_model import Book
+from app.catalog.models import Book
 import pytest
 from decimal import Decimal
 

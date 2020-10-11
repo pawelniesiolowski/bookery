@@ -1,5 +1,5 @@
 from tests.fixture import client
-from app.receiver.receiver_model import Receiver
+from app.receiver.models import Receiver
 
 
 def test_it_gets_new_receiver_form(client):
@@ -77,3 +77,19 @@ def test_it_does_not_create_receiver_that_already_exists(client):
     response = client.post('/receivers/form', data=receiver)
     expected_text = 'Użytkownik: Paweł Niesiołowski już istnieje'
     assert expected_text in response.get_data(as_text=True)
+
+
+def test_it_gets_receivers_data(client):
+    client.post('/receivers/form', data={
+        'name': 'Paweł',
+        'surname': 'Niesiołowski'
+    })
+    client.post('/receivers/form', data={
+        'name': 'Justyna',
+        'surname': 'Mazur'
+    })
+    response = client.get('/receivers')
+    data = response.get_json()
+    assert response.status_code == 200
+    assert data['status'] == 200
+    assert len(data['data']) == 2

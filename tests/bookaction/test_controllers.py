@@ -1,6 +1,7 @@
 from tests.fixture import client
-from app.bookaction.book_action_model import BookAction, BookActionName
-from app.catalog.book_model import Book
+from app.bookaction.models import BookAction, BookActionName
+from app.catalog.models import Book
+from app.receiver.models import Receiver
 from app import db
 
 
@@ -32,6 +33,27 @@ def test_it_returns_400_if_received_book_with_invalid_data(client):
     assert not BookAction.query.get(1)
 
 
+def test_it_creates_release_book_action(client):
+    create_book()
+    create_receiver()
+    client.post('/receive/1', json={'copies': 5})
+    response = client.post('/release/1', json={
+        'copies': 3,
+        'receiver': 1,
+        'comment': 'Testowy komentarz'
+    })
+    action = BookAction.query.get(2)
+    assert response.status_code == 201
+    assert response.get_json()['status'] == 201
+    assert action.name == BookActionName.RELEASE
+    assert action.copies == 3
+
+
 def create_book():
     book = Book('Test book')
     book.save()
+
+
+def create_receiver():
+    receiver = Receiver('Paweł', 'Niesiołowski')
+    receiver.save()

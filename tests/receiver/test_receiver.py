@@ -1,4 +1,4 @@
-from app.receiver.receiver_model import Receiver
+from app.receiver.models import Receiver
 import pytest
 
 

@@ -1,4 +1,4 @@
-from app.bookaction.book_action_model import BookAction, BookActionName
+from app.bookaction.models import BookAction, BookActionName
 import pytest
 
 

@@ -32,6 +32,12 @@ class Receiver(db.Model):
     def delete(self):
         self.deleted_at = datetime.now()
 
+    def format(self):
+        return {
+            'id': self.id,
+            'name': f'{self.name} {self.surname}'
+        }
+
     def __repr__(self):
         return f'''
 <Receiver

@@ -22,7 +22,7 @@
                         <td>
                             <a class="bookery-action" href="{{ url_for('receiver.edit', receiver_id=receiver.id) }}">Edytuj</a>
                             <a
-                                class="bookery-action-last"
+                                class="bookery-action-last bookery-action-delete"
                                 data-name="{{ receiver.name }} {{ receiver.surname }}"
                                 data-redirect="{{ url_for('receiver.index')}}"
                                 href="{{ url_for('receiver.delete', receiver_id=receiver.id) }}"

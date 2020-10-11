@@ -7,15 +7,15 @@ from . import catalog
 from .. import db
 from datetime import datetime
 from .forms import BookForm
-from .book_model import Book
-from .book_repo import BookRepo
-from app.bookaction.services import BookActionService
+from .models import Book
+from .repo import books_ordered_by_title, book_by_id, does_title_exist
+from app.bookaction.service import copies_for_book
 
 
 @catalog.route('/')
 def index():
     try:
-        books = BookRepo().get_all_ordered_by_title()
+        books = books_ordered_by_title()
     except SQLAlchemyError as e:
         current_app.logger.error(e)
         abort(500)
@@ -26,7 +26,7 @@ def index():
 @catalog.route('/books/<int:book_id>')
 def one(book_id):
     try:
-        book = BookRepo().get_by_id(book_id)
+        book = book_by_id(book_id)
     except SQLAlchemyError as e:
         current_app.logger.error(e)
         abort(500)
@@ -34,8 +34,7 @@ def one(book_id):
     if book is None:
         abort(404)
 
-    book_action_service = BookActionService()
-    copies = book_action_service.get_copies_for_book(book_id)
+    copies = copies_for_book(book_id)
 
     return render_template('catalog/book.html', book=book, copies=copies)
 
@@ -70,7 +69,7 @@ def create():
 @catalog.route('/books/<int:book_id>/form', methods=['GET', 'POST'])
 def edit(book_id):
     try:
-        book = BookRepo().get_by_id(book_id)
+        book = book_by_id(book_id)
     except SQLAlchemyError as e:
         current_app.logger.error(e)
         abort(500)
@@ -102,7 +101,7 @@ def edit(book_id):
 @catalog.route('/books/<int:book_id>', methods=['DELETE'])
 def delete(book_id):
     try:
-        book = BookRepo().get_by_id(book_id)
+        book = book_by_id(book_id)
     except SQLAlchemyError as e:
         current_app.logger.error(e)
         abort(500)
@@ -126,7 +125,7 @@ def delete(book_id):
 @catalog.route('/books/<string:title>/exists')
 def exists(title):
     try:
-        exists = BookRepo().does_title_exist(title)
+        exists = does_title_exist(title)
     except SQLAlchemyError as e:
         current_app.logger.error(e)
         abort(500)
