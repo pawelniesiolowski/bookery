@@ -3,9 +3,9 @@ from .models import BookAction, BookActionName
 
 class Copies:
     def __init__(self, num):
-        num = int(num)
-        if num < 0:
-            raise ValueError('There can\'t be less copies than zero')
+        num = num and int(num)
+        if not isinstance(num, int) or num < 0:
+            raise ValueError('Egzemplarze muszą być liczbą większą lub równą zero')
         self.num = num
 
     def add(self, copies):

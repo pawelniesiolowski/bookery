@@ -7,7 +7,7 @@ from . import receiver
 from .forms import ReceiverForm
 from .models import Receiver
 from .repo import (
-    receivers_ordered_by_surname, receiver_by_id, does_receiver_exist
+    receivers_ordered_by_surname, receiver_by_id, receiver_by_name
 )
 
 
@@ -28,7 +28,8 @@ def create():
     form = ReceiverForm(request.form)
     if form.validate_on_submit():
         receiver = Receiver(form.name.data, form.surname.data)
-        if does_receiver_exist(receiver):
+        existing_receiver = receiver_by_name(receiver.name, receiver.surname)
+        if existing_receiver and existing_receiver.deleted_at is None:
             flash(
                 f'Użytkownik: {receiver.name} {receiver.surname} już istnieje',
                 'error'
@@ -38,6 +39,10 @@ def create():
                 form=form,
                 subtitle='Dodaj użytkownika'
             )
+        elif existing_receiver:
+            receiver = existing_receiver
+            receiver.deleted_at = None
+
         try:
             receiver.save()
         except SQLAlchemyError as e:

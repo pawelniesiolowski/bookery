@@ -56,7 +56,7 @@ def release(book_id):
 
     data = request.get_json()
 
-    receiver_id = int(data.get('receiver'))
+    receiver_id = data.get('receiver') and int(data.get('receiver'))
     if not(receiver_id and does_receiver_exist(receiver_id)):
         abort(404, 'Taki użytkownik nie istnieje')
 

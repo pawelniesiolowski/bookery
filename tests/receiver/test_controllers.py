@@ -79,6 +79,15 @@ def test_it_does_not_create_receiver_that_already_exists(client):
     assert expected_text in response.get_data(as_text=True)
 
 
+def test_it_undeletes_deleted_receiver_if_it_is_created(client):
+    receiver = {'name': 'Paweł', 'surname': 'Niesiołowski'}
+    client.post('/receivers/form', data=receiver)
+    client.delete('/receivers/1')
+    assert Receiver.query.get(1).deleted_at is not None
+    client.post('/receivers/form', data=receiver)
+    assert Receiver.query.get(1).deleted_at is None
+
+
 def test_it_gets_receivers_data(client):
     client.post('/receivers/form', data={
         'name': 'Paweł',
