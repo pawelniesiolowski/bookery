@@ -9,7 +9,7 @@ from datetime import datetime
 from .forms import BookForm
 from .models import Book
 from .repo import books_ordered_by_title, book_by_id, does_title_exist
-from app.bookaction.service import copies_for_book
+from app.bookaction.service import copies_for_book, actions_for_book
 
 
 @catalog.route('/')
@@ -35,8 +35,14 @@ def one(book_id):
         abort(404)
 
     copies = copies_for_book(book_id)
+    actions = actions_for_book(book_id)
 
-    return render_template('catalog/book.html', book=book, copies=copies)
+    return render_template(
+        'catalog/book.html',
+        book=book,
+        copies=copies,
+        actions=actions
+    )
 
 
 @catalog.route('/books/form', methods=['GET', 'POST'])

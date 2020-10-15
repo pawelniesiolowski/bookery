@@ -28,6 +28,40 @@
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="bookery-book-action-container">
+            <h3 class="bookery-book-action-title text-center">Akcje</h3>
+                <div class="table-responsive-xl">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nr</th>
+                                <th scope="col">Nazwa</th>
+                                <th scope="col">Egzemplarze</th>
+                                <th scope="col">Odbiorca</th>
+                                <th scope="col">Komentarz</th>
+                                <th scope="col">Data dodania</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for action in actions %}
+                            <tr>
+                                <th scope="row">{{ loop.index }}</th>
+                                <td>{{ action.name }}</td>
+                                <td>{{ action.copies }}</td>
+                                <td>{{ action.receiver }}</td>
+                                <td>{{ action.comment }}</td>
+                                <td>{{ action.inserted_at }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block js %}

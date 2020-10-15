@@ -48,6 +48,12 @@ body {
 
 .bookery-book-action-title {
     font-size: 1.3rem;
+    margin: 2rem 0;
+}
+
+.btn {
+    padding-left: 2rem;
+    padding-right: 2rem;
 }
 
 .modal-window {

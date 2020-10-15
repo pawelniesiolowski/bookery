@@ -34,7 +34,7 @@ class BookAction(db.Model):
 
     @validates('copies')
     def validate_copies(self, key, value):
-        assert value and isinstance(value, int) and value > 0,\
+        assert value and isinstance(value, int) and value > 0, \
             'Liczba egzemplarzy musi być większa od zera'
         return value
 
@@ -48,14 +48,14 @@ class BookAction(db.Model):
         if self.name == BookActionName.RELEASE:
             assert value and isinstance(value, int) and value > 0
         else:
-            assert value is None or (isinstance(value, int) and value > 0)
+            assert value is None
         return value
 
     @validates('comment')
     def validate_comment(self, key, value):
         if value is not None:
             length = len(value.encode('utf-8'))
-            assert isinstance(value, str) and length < 256,\
+            assert isinstance(value, str) and length < 256, \
                 'Komentarz musi mieć mniej niż 256 znaków'
         return value
 
@@ -66,6 +66,24 @@ class BookAction(db.Model):
     def delete(self):
         db.session.remove(self)
         db.session.commit()
+
+    def format_for_catalog(self, get_receiver):
+        displayed_names = {
+            1: 'otrzymano',
+            2: 'wydano'
+        }
+        receiver = ''
+        if self.receiver_id:
+            receiver = get_receiver(self.receiver_id)['name']
+
+        return {
+            'id': self.id,
+            'name': displayed_names[self.name.value],
+            'copies': self.copies,
+            'receiver': receiver,
+            'comment': self.comment or '',
+            'inserted_at': self.inserted_at.strftime('%d-%m-%Y')
+        }
 
     def __repr__(self):
         return f'''

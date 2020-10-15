@@ -1,5 +1,5 @@
 from app import db
-from .repo import actions_ordered_by_date
+from .repo import actions_ordered_by_date_asc
 from .book import Book, Copies
 from . import bookaction
 from flask import request, abort, jsonify
@@ -42,7 +42,7 @@ def receive(book_id):
         abort(404, 'Taka książka nie istnieje w katalogu')
 
     data = request.get_json()
-    book = Book(actions_ordered_by_date(book_id), book_id=book_id)
+    book = Book(actions_ordered_by_date_asc(book_id), book_id=book_id)
     action = book.receive(Copies(data.get('copies')))
     action.save()
 
@@ -60,7 +60,7 @@ def release(book_id):
     if not(receiver_id and does_receiver_exist(receiver_id)):
         abort(404, 'Taki użytkownik nie istnieje')
 
-    book = Book(actions_ordered_by_date(book_id), book_id=book_id)
+    book = Book(actions_ordered_by_date_asc(book_id), book_id=book_id)
     action = book.release(
         Copies(data.get('copies')),
         receiver_id=receiver_id,

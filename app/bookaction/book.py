@@ -1,27 +1,6 @@
 from .models import BookAction, BookActionName
 
 
-class Copies:
-    def __init__(self, num):
-        num = num and int(num)
-        if not isinstance(num, int) or num < 0:
-            raise ValueError('Egzemplarze muszą być liczbą większą lub równą zero')
-        self.num = num
-
-    def add(self, copies):
-        assert isinstance(copies, Copies),\
-            'Copies must be instance of Copies class'
-        return Copies(self.num + copies.to_int())
-
-    def subtract(self, copies):
-        assert isinstance(copies, Copies),\
-            'Copies must be instance of Copies class'
-        return Copies(self.num - copies.to_int())
-
-    def to_int(self):
-        return self.num
-
-
 class Book:
     def __init__(self, events, *, book_id):
         self.book_id = book_id
@@ -56,3 +35,26 @@ class Book:
             receiver_id=receiver_id,
             comment=comment
         )
+
+
+class Copies:
+    def __init__(self, num):
+        num = num and int(num)
+        if not isinstance(num, int) or num < 0:
+            raise ValueError(
+                'Egzemplarze muszą być liczbą większą lub równą zero'
+            )
+        self.num = num
+
+    def add(self, copies):
+        assert isinstance(copies, Copies),\
+            'Copies must be instance of Copies class'
+        return Copies(self.num + copies.to_int())
+
+    def subtract(self, copies):
+        assert isinstance(copies, Copies),\
+            'Copies must be instance of Copies class'
+        return Copies(self.num - copies.to_int())
+
+    def to_int(self):
+        return self.num
