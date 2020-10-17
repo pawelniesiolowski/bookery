@@ -43,7 +43,7 @@ def receive(book_id):
 
     data = request.get_json()
     book = Book(actions_ordered_by_date_asc(book_id), book_id=book_id)
-    action = book.receive(Copies(data.get('copies')))
+    action = book.receive(Copies(int(data.get('copies'))))
     action.save()
 
     return jsonify({'message': '', 'status': 201}), 201
@@ -62,10 +62,24 @@ def release(book_id):
 
     book = Book(actions_ordered_by_date_asc(book_id), book_id=book_id)
     action = book.release(
-        Copies(data.get('copies')),
+        Copies(int(data.get('copies'))),
         receiver_id=receiver_id,
         comment=data.get('comment')
     )
+    action.save()
+
+    return jsonify({'message': '', 'status': 201}), 201
+
+
+@bookaction.route('/sell/<int:book_id>', methods=['POST'])
+def sell(book_id):
+    if not does_book_exist(book_id):
+        abort(404, 'Taka książka nie istnieje w katalogu')
+
+    data = request.get_json()
+
+    book = Book(actions_ordered_by_date_asc(book_id), book_id=book_id)
+    action = book.sell(Copies(int(data.get('copies'))))
     action.save()
 
     return jsonify({'message': '', 'status': 201}), 201

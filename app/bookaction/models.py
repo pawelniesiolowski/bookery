@@ -34,19 +34,18 @@ class BookAction(db.Model):
 
     @validates('copies')
     def validate_copies(self, key, value):
-        assert value and isinstance(value, int) and value > 0, \
-            'Liczba egzemplarzy musi być większa od zera'
+        self.validate_number(value)
         return value
 
     @validates('book_id')
     def validate_book_id(self, key, value):
-        assert value and isinstance(value, int) and value > 0
+        self.validate_number(value)
         return value
 
     @validates('receiver_id')
     def validate_receiver_id(self, key, value):
         if self.name == BookActionName.RELEASE:
-            assert value and isinstance(value, int) and value > 0
+            self.validate_number(value)
         else:
             assert value is None
         return value
@@ -56,8 +55,12 @@ class BookAction(db.Model):
         if value is not None:
             length = len(value.encode('utf-8'))
             assert isinstance(value, str) and length < 256, \
-                'Komentarz musi mieć mniej niż 256 znaków'
+                'The comment must be less than 256 utf-8 characters long'
         return value
+
+    def validate_number(self, value):
+        assert value and isinstance(value, int) and value > 0, \
+            'Number must be integer greater than zero'
 
     def save(self):
         db.session.add(self)
@@ -70,7 +73,8 @@ class BookAction(db.Model):
     def format_for_catalog(self, get_receiver):
         displayed_names = {
             1: 'otrzymano',
-            2: 'wydano'
+            2: 'wydano',
+            3: 'sprzedano'
         }
         receiver = ''
         if self.receiver_id:

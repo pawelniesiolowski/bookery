@@ -49,6 +49,18 @@ def test_it_creates_release_book_action(client):
     assert action.copies == 3
 
 
+def test_it_creates_sell_book_action(client):
+    create_book()
+    create_receiver()
+    client.post('/receive/1', json={'copies': 10})
+    response = client.post('/sell/1', json={'copies': 5})
+    action = BookAction.query.get(2)
+    assert response.status_code == 201
+    assert response.get_json()['status'] == 201
+    assert action.name == BookActionName.SELL
+    assert action.copies == 5
+
+
 def test_it_returns_404_if_gets_invalid_receiver_id(client):
     create_book()
     client.post('/receive/1', json={'copies': 5})
@@ -72,9 +84,10 @@ def test_it_returns_400_if_gets_invalid_copies_data(client):
         'receiver': 1,
         'comment': 'Testowy komentarz'
     })
+    data = response.get_json()
     assert response.status_code == 400
-    assert response.get_json()['status'] == 400
-    assert 'Egzemplarze' in response.get_json()['error']
+    assert data['status'] == 400
+    assert 'error' in data
     assert not BookAction.query.get(2)
 
 

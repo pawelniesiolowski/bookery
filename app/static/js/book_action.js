@@ -9,7 +9,7 @@ const BookAction = (() => {
                 const info = `Ile egzemplarzy książki "${title}" chcesz dodać?`;
                 const buttonText = 'Dodaj';
                 const action = (e) => receiveAction(e, actionHref);
-                const additionalDiv = createReceiveDiv();
+                const additionalDiv = createFormWithCopies('receive');
                 const modalContent = ModalContentCreator.create(info, buttonText, action, additionalDiv);
                 ModalWindow.init(modalContent);
             } else if (actionId == 'bookery-release') {
@@ -20,13 +20,20 @@ const BookAction = (() => {
                     const modalContent = ModalContentCreator.create(info, buttonText, action, releaseAdditionalDiv);
                     ModalWindow.init(modalContent);
                 });
+            } else if (actionId == 'bookery-sell') {
+                const info = `Ile egzemplarzy książki "${title}" chcesz sprzedać?`;
+                const buttonText = 'Sprzedaj';
+                const additionalDiv = createFormWithCopies('sell');
+                const action = (e) => sellAction(e, actionHref);
+                const modalContent = ModalContentCreator.create(info, buttonText, action, additionalDiv);
+                ModalWindow.init(modalContent);
             }
         });
     };
 
-    const createReceiveDiv = () => {
+    const createFormWithCopies = (name) => {
         const form = document.createElement('form');
-        form.setAttribute('id', 'receive-form');
+        form.setAttribute('id', `${name}-form`);
 
         const formGroup = document.createElement('div');
         formGroup.setAttribute('class', 'form-group');
@@ -136,6 +143,14 @@ const BookAction = (() => {
         const receiver = form.elements.namedItem('receiver').value;
         const comment = form.elements.namedItem('comment').value;
         const data = {copies: copies, receiver: receiver, comment: comment};
+        return doAction(data, actionHref);
+    };
+
+    const sellAction = (e, actionHref) => {
+        e.preventDefault();
+        const form = document.getElementById('sell-form');
+        const copies = form.elements.namedItem('copies').value;
+        const data = {copies: copies};
         return doAction(data, actionHref);
     };
 
