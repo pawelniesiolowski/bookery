@@ -34,7 +34,7 @@
         <div class="bookery-book-action-container">
             <h3 class="bookery-book-action-title text-center">Akcje</h3>
                 <div class="table-responsive-xl">
-                    <table class="table table-striped">
+                    <table class="table table-striped" id="bookery-book-action-table">
                         <thead>
                             <tr>
                                 <th scope="col">Nr</th>
@@ -49,7 +49,13 @@
                             {% for action in actions %}
                             <tr>
                                 <th scope="row">{{ loop.index }}</th>
-                                <td>{{ action.name }}</td>
+                                <td>
+                                    {% if action.name == 'wydano' %}
+                                    <a href="{{ url_for('bookaction.sell_released', book_id=book.id, action_id=action.id) }}" class="bookery-book-action-special" data-copies="{{ action.copies }}">{{ action.name }}</a>
+                                    {% else %}
+                                    {{ action.name }}
+                                    {% endif %}
+                                </td>
                                 <td>{{ action.copies }}</td>
                                 <td>{{ action.receiver }}</td>
                                 <td>{{ action.comment }}</td>

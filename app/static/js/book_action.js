@@ -1,6 +1,7 @@
 const BookAction = (() => {
     const init = () => {
         const actions = document.getElementById('bookery-book-action');
+        const specialActions = document.getElementById('bookery-book-action-table');
         const title = actions.dataset.name;
         actions.addEventListener('click', (e) => {
             const actionId = e.target.id;
@@ -27,6 +28,20 @@ const BookAction = (() => {
                 const action = (e) => sellAction(e, actionHref);
                 const modalContent = ModalContentCreator.create(info, buttonText, action, additionalDiv);
                 ModalWindow.init(modalContent);
+            }
+        });
+        specialActions.addEventListener('click', (e) => {
+            if (e.target.classList.contains('bookery-book-action-special')) {
+                e.preventDefault();
+                const copies = e.target.dataset.copies;
+                const href = e.target.getAttribute('href');
+                const info = `Ile z ${copies} wydanych egzemplarzy książki "${title}" udało się sprzedać?`;
+                const buttonText = 'Sprzedaj';
+                const additionalDiv = createFormWithCopies('sell-received');
+                const action = (e) => sellReceivedAction(e, href);
+                const modalContent = ModalContentCreator.create(info, buttonText, action, additionalDiv);
+                ModalWindow.init(modalContent);
+
             }
         });
     };
@@ -154,6 +169,14 @@ const BookAction = (() => {
         return doAction(data, actionHref);
     };
 
+    const sellReceivedAction = (e, actionHref) => {
+        e.preventDefault();
+        const form = document.getElementById('sell-received-form');
+        const copies = form.elements.namedItem('copies').value;
+        const data = {copies: copies};
+        return doAction(data, actionHref);
+    };
+
     const doAction = (data, actionHref) => {
         fetch(actionHref, {
             method: 'POST',
@@ -167,7 +190,7 @@ const BookAction = (() => {
         .then(response => {
             if (response.status == 201) {
                 window.location.reload(true);
-            } else if (response.status == 400 || response.status == 404) {
+            } else if (response.status == 400 || response.status == 404 || response.status == 500) {
                 alert(response.error)
             } else {
                 console.log(response.error);

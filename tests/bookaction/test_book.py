@@ -65,3 +65,108 @@ def test_it_raises_error_if_calculates_less_copies_than_zero():
         book = Book([], book_id=1)
         book.receive(Copies(4))
         action = book.release(Copies(5), receiver_id=1)
+
+
+def test_it_sells_released_books():
+    BookAction.save_in_transaction = lambda self: setattr(self, 'saved', True)
+    BookAction.delete_in_transaction = (
+        lambda self: setattr(self, 'deleted', True)
+    )
+    released = BookAction(
+        BookActionName.RELEASE,
+        5,
+        book_id=1,
+        receiver_id=1,
+        id=2
+    )
+    actions = [
+        BookAction(BookActionName.RECEIVE, 10, book_id=1),
+        released
+    ]
+    book = Book(actions, book_id=1)
+    action = book.sell_released(Copies(3), release_id=2)
+    assert action.name == BookActionName.SELL
+    assert action.copies == 3
+    assert released.copies == 2
+    assert not hasattr(released, 'deleted')
+    assert released.saved
+
+
+def test_it_sells_all_released_books():
+    BookAction.save_in_transaction = lambda self: setattr(self, 'saved', True)
+    BookAction.delete_in_transaction = (
+        lambda self: setattr(self, 'deleted', True)
+    )
+    released = BookAction(
+        BookActionName.RELEASE,
+        5,
+        book_id=1,
+        receiver_id=1,
+        id=2
+    )
+    actions = [
+        BookAction(BookActionName.RECEIVE, 10, book_id=1),
+        released
+    ]
+    book = Book(actions, book_id=1)
+    action = book.sell_released(Copies(5), release_id=2)
+    assert action.name == BookActionName.SELL
+    assert action.copies == 5
+    assert released.deleted
+
+
+def test_it_raises_error_if_selled_copies_are_greater_than_released_copies():
+    BookAction.save_in_transaction = lambda self: None
+    BookAction.delete_in_transaction = lambda self: None
+    released = BookAction(
+        BookActionName.RELEASE,
+        5,
+        book_id=1,
+        receiver_id=1,
+        id=2
+    )
+    actions = [
+        BookAction(BookActionName.RECEIVE, 10, book_id=1),
+        released
+    ]
+    book = Book(actions, book_id=1)
+    with pytest.raises(ValueError):
+        book.sell_released(Copies(6), release_id=2)
+
+
+def test_it_raises_error_if_released_id_does_not_exist():
+    BookAction.save_in_transaction = lambda self: None
+    BookAction.delete_in_transaction = lambda self: None
+    released = BookAction(
+        BookActionName.RELEASE,
+        5,
+        book_id=1,
+        receiver_id=1,
+        id=2
+    )
+    actions = [
+        BookAction(BookActionName.RECEIVE, 10, book_id=1),
+        released
+    ]
+    book = Book(actions, book_id=1)
+    with pytest.raises(ValueError):
+        book.sell_released(Copies(3), release_id=3)
+
+
+def test_it_raises_error_if_selled_copies_equals_to_zero():
+    BookAction.save_in_transaction = lambda self: None
+    BookAction.delete_in_transaction = lambda self: None
+    released = BookAction(
+        BookActionName.RELEASE,
+        5,
+        book_id=1,
+        receiver_id=1,
+        id=2
+    )
+    actions = [
+        BookAction(BookActionName.RECEIVE, 10, book_id=1),
+        released
+    ]
+    book = Book(actions, book_id=1)
+    with pytest.raises(AssertionError):
+        book.sell_released(Copies(0), release_id=3)

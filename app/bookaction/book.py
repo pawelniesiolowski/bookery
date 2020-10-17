@@ -8,6 +8,7 @@ class Book:
         self.book_id = book_id
         self.copies = Copies(0)
         self.apply_events(events)
+        self.events = events
 
     def apply_events(self, events):
         for event in events:
@@ -49,6 +50,34 @@ was applied to book with id: #{self.book_id}')
             copies.to_int(),
             book_id=self.book_id
         )
+
+    def sell_released(self, copies, *, release_id):
+        validate_copies(copies)
+        for event in self.events:
+            if event.id == release_id:
+                return self.do_sell_released(event, copies)
+        raise ValueError(f'Release action with id {release_id} does not exist')
+
+    def do_sell_released(self, action, copies):
+        sold = copies.to_int()
+        if action.copies > sold:
+            action.copies = action.copies - sold
+            action.save_in_transaction()
+            return BookAction(
+                BookActionName.SELL,
+                sold,
+                book_id=self.book_id
+            )
+        elif action.copies == sold:
+            action.delete_in_transaction()
+            return BookAction(
+                BookActionName.SELL,
+                sold,
+                book_id=self.book_id
+            )
+        else:
+            msg = 'Selled copies must be greater or equals to released copies'
+            raise ValueError(msg)
 
 
 class Copies:

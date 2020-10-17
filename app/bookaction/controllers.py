@@ -2,7 +2,7 @@ from app import db
 from .repo import actions_ordered_by_date_asc
 from .book import Book, Copies
 from . import bookaction
-from flask import request, abort, jsonify
+from flask import request, abort, jsonify, current_app
 from sqlalchemy.exc import SQLAlchemyError
 from app.catalog.service import does_book_exist
 from app.receiver.service import does_receiver_exist
@@ -10,6 +10,7 @@ from app.receiver.service import does_receiver_exist
 
 @bookaction.errorhandler(AssertionError)
 @bookaction.errorhandler(ValueError)
+@bookaction.errorhandler(400)
 def validation_error(e):
     error = {
         'error': str(e),
@@ -36,6 +37,15 @@ def not_found(e):
     return jsonify(error), 404
 
 
+@bookaction.errorhandler(500)
+def internal_server_error(e):
+    error = {
+        'error': str(e),
+        'status': 500
+    }
+    return jsonify(error), 500
+
+
 @bookaction.route('/receive/<int:book_id>', methods=['POST'])
 def receive(book_id):
     if not does_book_exist(book_id):
@@ -44,7 +54,12 @@ def receive(book_id):
     data = request.get_json()
     book = Book(actions_ordered_by_date_asc(book_id), book_id=book_id)
     action = book.receive(Copies(int(data.get('copies'))))
-    action.save()
+    try:
+        action.save()
+    except SQLAlchemyError as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        abort(500, 'Nie udało się zapisać akcji')
 
     return jsonify({'message': '', 'status': 201}), 201
 
@@ -66,7 +81,13 @@ def release(book_id):
         receiver_id=receiver_id,
         comment=data.get('comment')
     )
-    action.save()
+
+    try:
+        action.save()
+    except SQLAlchemyError as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        abort(500, 'Nie udało się zapisać akcji')
 
     return jsonify({'message': '', 'status': 201}), 201
 
@@ -80,6 +101,44 @@ def sell(book_id):
 
     book = Book(actions_ordered_by_date_asc(book_id), book_id=book_id)
     action = book.sell(Copies(int(data.get('copies'))))
-    action.save()
+
+    try:
+        action.save()
+    except SQLAlchemyError as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        abort(500, 'Nie udało się zapisać akcji')
+
+    return jsonify({'message': '', 'status': 201}), 201
+
+
+@bookaction.route(
+    '/sell/<int:book_id>/<int:action_id>',
+    methods=['POST']
+)
+def sell_released(book_id, action_id):
+    if not does_book_exist(book_id):
+        abort(404, 'Taka książka nie istnieje w katalogu')
+
+    data = request.get_json()
+
+    book = Book(actions_ordered_by_date_asc(book_id), book_id=book_id)
+    try:
+        action = book.sell_released(
+            Copies(int(data.get('copies'))),
+            release_id=action_id
+        )
+        action.save_in_transaction()
+        db.session.commit()
+    except (ValueError, AssertionError) as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        msg = 'Liczba sprzedanych książek musi być mniejsza lub równa \
+wydanym książkom oraz większa od zera'
+        abort(400, msg)
+    except Exception as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        abort(500, 'Niestety nie udało się sprzedać wydanych książek')
 
     return jsonify({'message': '', 'status': 201}), 201

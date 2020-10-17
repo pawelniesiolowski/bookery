@@ -17,7 +17,6 @@ def index():
         receivers = receivers_ordered_by_surname()
     except SQLAlchemyError as e:
         current_app.logger.error(e)
-        db.session.rollback()
         abort(500)
 
     return render_template('receiver/index.html', receivers=receivers)
@@ -28,7 +27,15 @@ def create():
     form = ReceiverForm(request.form)
     if form.validate_on_submit():
         receiver = Receiver(form.name.data, form.surname.data)
-        existing_receiver = receiver_by_name(receiver.name, receiver.surname)
+        try:
+            existing_receiver = receiver_by_name(
+                receiver.name,
+                receiver.surname
+            )
+        except SQLAlchemyError as e:
+            current_app.logger.error(e)
+            abort(500)
+
         if existing_receiver and existing_receiver.deleted_at is None:
             flash(
                 f'Użytkownik: {receiver.name} {receiver.surname} już istnieje',
@@ -66,7 +73,6 @@ def edit(receiver_id):
         receiver = receiver_by_id(receiver_id)
     except SQLAlchemyError as e:
         current_app.logger.error(e)
-        db.session.rollback()
         abort(500)
 
     if receiver is None:
@@ -101,7 +107,6 @@ def delete(receiver_id):
         receiver = receiver_by_id(receiver_id)
     except SQLAlchemyError as e:
         current_app.logger.error(e)
-        db.session.rollback()
         abort(500)
 
     if receiver is None:
@@ -126,7 +131,6 @@ def all():
         receivers = receivers_ordered_by_surname()
     except SQLAlchemyError as e:
         current_app.logger.error(e)
-        db.session.rollback()
         abort(500)
 
     data = [receiver.format() for receiver in receivers]

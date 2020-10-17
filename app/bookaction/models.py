@@ -67,8 +67,14 @@ class BookAction(db.Model):
         db.session.commit()
 
     def delete(self):
-        db.session.remove(self)
+        db.session.delete(self)
         db.session.commit()
+
+    def save_in_transaction(self):
+        db.session.add(self)
+
+    def delete_in_transaction(self):
+        db.session.delete(self)
 
     def format_for_catalog(self, get_receiver):
         displayed_names = {
