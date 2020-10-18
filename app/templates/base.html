@@ -41,6 +41,11 @@
                 <div class="navbar-nav">
                     <a class="nav-item nav-link" href="{{ url_for('receiver.create') }}">Dodaj użytkownika</a>
                 </div>
+                {% if current_user.is_authenticated %}
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link" href="{{ url_for('auth.logout') }}">Wyloguj się</a>
+                </div>
+                {% endif %}
             </div>
         </nav>
         <h2 class="bookery-subtitle">{% block subtitle %}{% endblock %}</h2>

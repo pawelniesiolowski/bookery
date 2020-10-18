@@ -22,4 +22,8 @@ def create_app(config_name):
     from .bookaction import bookaction as bookaction_blueprint
     app.register_blueprint(bookaction_blueprint)
 
+    from .auth import auth as auth_blueprint, login_manager
+    app.register_blueprint(auth_blueprint)
+    login_manager.init_app(app)
+
     return app

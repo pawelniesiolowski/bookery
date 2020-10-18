@@ -14,4 +14,5 @@ if __name__ == '__main__':
     from app.catalog.models import Book
     from app.receiver.models import Receiver
     from app.bookaction.models import BookAction
+    from app.auth.models import User
     manager.run()

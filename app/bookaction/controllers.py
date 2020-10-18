@@ -6,6 +6,7 @@ from flask import request, abort, jsonify, current_app
 from sqlalchemy.exc import SQLAlchemyError
 from app.catalog.service import does_book_exist
 from app.receiver.service import does_receiver_exist
+from flask_login import login_required
 
 
 @bookaction.errorhandler(AssertionError)
@@ -47,6 +48,7 @@ def internal_server_error(e):
 
 
 @bookaction.route('/receive/<int:book_id>', methods=['POST'])
+@login_required
 def receive(book_id):
     if not does_book_exist(book_id):
         abort(404, 'Taka książka nie istnieje w katalogu')
@@ -65,6 +67,7 @@ def receive(book_id):
 
 
 @bookaction.route('/release/<int:book_id>', methods=['POST'])
+@login_required
 def release(book_id):
     if not does_book_exist(book_id):
         abort(404, 'Taka książka nie istnieje w katalogu')
@@ -93,6 +96,7 @@ def release(book_id):
 
 
 @bookaction.route('/sell/<int:book_id>', methods=['POST'])
+@login_required
 def sell(book_id):
     if not does_book_exist(book_id):
         abort(404, 'Taka książka nie istnieje w katalogu')
@@ -116,6 +120,7 @@ def sell(book_id):
     '/sell/<int:book_id>/<int:action_id>',
     methods=['POST']
 )
+@login_required
 def sell_released(book_id, action_id):
     if not does_book_exist(book_id):
         abort(404, 'Taka książka nie istnieje w katalogu')

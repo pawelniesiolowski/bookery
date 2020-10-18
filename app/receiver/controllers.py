@@ -9,9 +9,11 @@ from .models import Receiver
 from .repo import (
     receivers_ordered_by_surname, receiver_by_id, receiver_by_name
 )
+from flask_login import login_required
 
 
 @receiver.route('/receivers/index')
+@login_required
 def index():
     try:
         receivers = receivers_ordered_by_surname()
@@ -23,6 +25,7 @@ def index():
 
 
 @receiver.route('/receivers/form', methods=['GET', 'POST'])
+@login_required
 def create():
     form = ReceiverForm(request.form)
     if form.validate_on_submit():
@@ -68,6 +71,7 @@ def create():
 
 
 @receiver.route('/receivers/<int:receiver_id>/form', methods=['GET', 'POST'])
+@login_required
 def edit(receiver_id):
     try:
         receiver = receiver_by_id(receiver_id)
@@ -102,6 +106,7 @@ def edit(receiver_id):
 
 
 @receiver.route('/receivers/<int:receiver_id>', methods=['DELETE'])
+@login_required
 def delete(receiver_id):
     try:
         receiver = receiver_by_id(receiver_id)
@@ -126,6 +131,7 @@ def delete(receiver_id):
 
 
 @receiver.route('/receivers')
+@login_required
 def all():
     try:
         receivers = receivers_ordered_by_surname()

@@ -10,6 +10,7 @@ from .forms import BookForm
 from .models import Book
 from .repo import books_ordered_by_title, book_by_id, does_title_exist
 from app.bookaction.service import copies_for_book, actions_for_book
+from flask_login import login_required
 
 
 @catalog.route('/')
@@ -24,6 +25,7 @@ def index():
 
 
 @catalog.route('/books/<int:book_id>')
+@login_required
 def one(book_id):
     try:
         book = book_by_id(book_id)
@@ -46,6 +48,7 @@ def one(book_id):
 
 
 @catalog.route('/books/form', methods=['GET', 'POST'])
+@login_required
 def create():
     form = BookForm(request.form)
     if form.validate_on_submit():
@@ -73,6 +76,7 @@ def create():
 
 
 @catalog.route('/books/<int:book_id>/form', methods=['GET', 'POST'])
+@login_required
 def edit(book_id):
     try:
         book = book_by_id(book_id)
@@ -105,6 +109,7 @@ def edit(book_id):
 
 
 @catalog.route('/books/<int:book_id>', methods=['DELETE'])
+@login_required
 def delete(book_id):
     try:
         book = book_by_id(book_id)
@@ -129,6 +134,7 @@ def delete(book_id):
 
 
 @catalog.route('/books/<string:title>/exists')
+@login_required
 def exists(title):
     try:
         exists = does_title_exist(title)
