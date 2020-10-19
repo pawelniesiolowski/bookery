@@ -11,6 +11,11 @@ class Config:
         pass
 
 
+class ProductionConfig(Config):
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
+
+
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'postgresql:///bookery'
@@ -25,6 +30,7 @@ class TestConfig(Config):
 
 
 config = {
+    'production': ProductionConfig,
     'development': DevelopmentConfig,
     'test': TestConfig,
     'default': DevelopmentConfig
