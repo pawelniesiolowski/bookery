@@ -56,7 +56,8 @@ def create():
             form.title.data,
             authors=form.authors.data,
             isbn=form.isbn.data,
-            price=form.price.data
+            price=form.price.data,
+            publication_year=form.publication_year.data
         )
         try:
             book.save()

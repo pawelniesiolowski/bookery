@@ -8,7 +8,8 @@
         <p>Autor: <span class="bookery-info">{{ book.authors if book.authors }}</span></p>
         <p>ISBN: <span class="bookery-info">{{ book.isbn if book.isbn }}</span></p>
         <p>Cena: <span class="bookery-info">{{ book.price if book.price }}</span></p>
-        <p>Data dodania: <span class="bookery-info">{{ book.inserted_at.strftime('%d-%m-%Y') }}</span></p>
+        <p>Rok publikacji: <span class="bookery-info">{{ book.publication_year if book.publication_year }}</span></p>
+        <p>Data dodania: <span class="bookery-info">{{ book.inserted_at.strftime('%d-%m-%Y') if book.publication_date }}</span></p>
         <a class="bookery-action" href="{{ url_for('catalog.edit', book_id=book.id) }}">Edytuj książkę</a>
         <a
             id="bookery-delete-book-action"

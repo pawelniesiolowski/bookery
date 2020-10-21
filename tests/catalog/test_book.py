@@ -1,6 +1,7 @@
 from app.catalog.models import Book
 import pytest
 from decimal import Decimal
+from datetime import datetime
 
 
 def test_it_is_created_with_title():
@@ -54,7 +55,33 @@ def test_it_raises_error_if_price_is_to_high():
 
 
 def test_optional_values_can_be_none():
-    assert Book('Test title', authors=None, isbn=None, price=None)
+    assert Book('Test title', authors=None, isbn=None, price=None, publication_year=None)
+
+
+def test_it_has_publication_year():
+    book = Book('Test title', publication_year=2020)
+    assert book.publication_year == Decimal('2020')
+
+
+def test_it_raises_error_if_publication_year_is_less_than_zero():
+    with pytest.raises(AssertionError):
+        Book('Test title', publication_year=-1)
+
+
+def test_it_raises_error_if_publication_year_is_greater_than_actual_year():
+    with pytest.raises(AssertionError):
+        actual_year = datetime.now().year
+        Book('Test title', publication_year=actual_year + 1)
+
+
+def test_it_create_decimal_from_string():
+    book = Book('Test title', publication_year='2010')
+    assert book.publication_year == Decimal('2010')
+
+
+def test_it_sets_none_if_gets_empty_string():
+    book = Book('Test title', publication_year='')
+    assert book.publication_year == None
 
 
 def test_it_can_be_deleted():

@@ -29,12 +29,23 @@
 
                 <div class="form-group">
                     <div class="form-row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             {{ form.authors.label }}<br>
                             {{ form.authors(class='form-control') }}
                             {% if form.errors %}
                                 <div>
                                     {% for error in form.errors.authors %}
+                                        <span class="form-error">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.publication_year.label }}<br>
+                            {{ form.publication_year(class='form-control') }}
+                            {% if form.errors %}
+                                <div>
+                                    {% for error in form.errors.publication_year %}
                                         <span class="form-error">{{ error }}</span>
                                     {% endfor %}
                                 </div>

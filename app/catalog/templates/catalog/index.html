@@ -14,6 +14,7 @@
                         <th scope="col">Autor</th>
                         <th scope="col">ISBN</th>
                         <th scope="col">Cena</th>
+                        <th scope="col">Rok publikacji</th>
                         <th scope="col">Data dodania</th>
                     </tr>
                 </thead>
@@ -25,6 +26,7 @@
                         <td>{{ book.authors if book.authors }}</td>
                         <td>{{ book.isbn if book.isbn }}</td>
                         <td>{{ book.price if book.price }}</td>
+                        <td>{{ book.publication_year if book.publication_year }}</td>
                         <td>{{ book.inserted_at.strftime('%d-%m-%Y') }}</td>
                     </tr>
                     {% endfor %}

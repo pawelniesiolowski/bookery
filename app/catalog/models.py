@@ -11,6 +11,7 @@ class Book(db.Model):
     authors = db.Column(db.String(500), nullable=True)
     isbn = db.Column(db.String(17), nullable=True)
     price = db.Column(db.Numeric(7, 2), nullable=True)
+    publication_year = db.Column(db.Numeric(4, 0), nullable=True)
     inserted_at = db.Column(db.DateTime, nullable=False)
     deleted_at = db.Column(db.DateTime)
 
@@ -36,10 +37,18 @@ class Book(db.Model):
 
     @validates('price')
     def validate_price(self, key, value):
-        if value is None:
-            return value
+        if not value:
+            return None
         value = Decimal(value).quantize(Decimal('.01'), rounding=ROUND_UP)
         assert value and value > Decimal('0') and value < Decimal('100000')
+        return value
+
+    @validates('publication_year')
+    def validate_publication_year(self, key, value):
+        if not value:
+            return None
+        value = Decimal(value).quantize(Decimal('1.'), rounding=ROUND_UP)
+        assert value and value > Decimal('0') and value <= datetime.now().year
         return value
 
     def save(self):
@@ -57,6 +66,7 @@ class Book(db.Model):
     authors: {self.authors},
     isbn: {self.isbn},
     price: {self.price},
-    inserted_at: {self.inserted_at}
+    publication_year: {self.publication_year},
+    inserted_at: {self.inserted_at},
     deleted_at: {self.deleted_at}
 >'''

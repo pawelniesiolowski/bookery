@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, DecimalField, SubmitField
+from wtforms.fields.html5 import IntegerField, DecimalField
+from wtforms import StringField, SubmitField
 from wtforms.validators import (
     DataRequired,
     Length,
@@ -8,6 +9,13 @@ from wtforms.validators import (
     NumberRange
 )
 from .isbn_validator import ISBNValidator
+from datetime import datetime
+from wtforms.validators import ValidationError
+
+
+def validate_year(form, field):
+    if field.data < 0 or field.data > datetime.now().year:
+        raise ValidationError('Rok musi być większy od zera i mniejszy lub równy aktualnemu')
 
 
 class BookForm(FlaskForm):
@@ -52,5 +60,9 @@ class BookForm(FlaskForm):
                 message='Cena musi być w wysokości od 0 do 99999.99 zł'
             )
         ]
+    )
+    publication_year = IntegerField(
+        'Rok publikacji:',
+        validators=[Optional(), validate_year]
     )
     submit = SubmitField('Zapisz')
