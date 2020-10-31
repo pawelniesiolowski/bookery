@@ -15,7 +15,9 @@ from wtforms.validators import ValidationError
 
 def validate_year(form, field):
     if field.data < 0 or field.data > datetime.now().year:
-        raise ValidationError('Rok musi być większy od zera i mniejszy lub równy aktualnemu')
+        raise ValidationError(
+            'Rok musi być większy od zera i mniejszy lub równy aktualnemu'
+        )
 
 
 class BookForm(FlaskForm):

@@ -55,7 +55,13 @@ def test_it_raises_error_if_price_is_to_high():
 
 
 def test_optional_values_can_be_none():
-    assert Book('Test title', authors=None, isbn=None, price=None, publication_year=None)
+    assert Book(
+        'Test title',
+        authors=None,
+        isbn=None,
+        price=None,
+        publication_year=None
+    )
 
 
 def test_it_has_publication_year():
@@ -81,7 +87,7 @@ def test_it_create_decimal_from_string():
 
 def test_it_sets_none_if_gets_empty_string():
     book = Book('Test title', publication_year='')
-    assert book.publication_year == None
+    assert book.publication_year is None
 
 
 def test_it_can_be_deleted():

@@ -5,7 +5,7 @@
 {% block content %}
     <div class="row">
         <div class="col-md-4 offset-md-4">
-            <form method="POST">
+            <form method="POST" id="bookery-login-form">
                 {{ form.hidden_tag() }}
 
                 <div class="form-group">
@@ -40,8 +40,19 @@
                     </div>
                 </div>
 
-                {{ form.submit() }}
+                {{ form.submit(class='g-recaptcha', **{'data-sitekey': captcha_key, 'data-callback':'onSubmit', 'data-action':'submit'}) }}
             </form>
         </div>
     </div>
+{% endblock %}
+
+{% block js %}
+    {{ super() }}
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <script>
+        function onSubmit() {
+            const form = document.getElementById('bookery-login-form');
+            HTMLFormElement.prototype.submit.call(form);
+        }
+    </script>
 {% endblock %}
