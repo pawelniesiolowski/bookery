@@ -1,7 +1,9 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from config import config
+from config import config, ConfigName
 from flask_cors import CORS
+from .logger import setup_logger
+from flask.logging import default_handler
 
 
 db = SQLAlchemy()
@@ -9,9 +11,15 @@ db = SQLAlchemy()
 
 def create_app(config_name):
     app = Flask(__name__)
+
     CORS(app)
+
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
+
+    if app.config['NAME'] == ConfigName.PRODUCTION:
+        app.logger.removeHandler(default_handler)
+        setup_logger(app)
 
     db.init_app(app)
 
