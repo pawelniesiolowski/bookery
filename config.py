@@ -12,7 +12,7 @@ class ConfigName(Enum):
 class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = 'secret'
-    LOG_FILE = 'log/error.log'
+    LOG_FILE = '/var/log/bookery.log'
     LOG_LEVEL = logging.DEBUG
 
     @staticmethod

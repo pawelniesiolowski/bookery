@@ -27,6 +27,11 @@ def login():
         user = User.query.filter_by(email=email).first()
 
         if not user or not check_password_hash(user.password, password):
+            user_ip = request.headers.get('X-Real-IP', request.remote_addr)
+            current_app.logger.warning(
+                f'Nieprawidłowe dane logowania.'
+                f'Email: {email}, ip: {user_ip}.'
+            )
             flash('Podano nieprawidłowe dane logowania')
             return redirect(url_for('auth.login'))
 
