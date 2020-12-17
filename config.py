@@ -14,6 +14,7 @@ class Config:
     SECRET_KEY = 'secret'
     LOG_FILE = '/var/log/bookery.log'
     LOG_LEVEL = logging.DEBUG
+    SEND_FILE_MAX_AGE_DEFAULT = 0
 
     @staticmethod
     def init_app(app):

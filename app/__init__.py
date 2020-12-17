@@ -36,4 +36,7 @@ def create_app(config_name):
     app.register_blueprint(auth_blueprint)
     login_manager.init_app(app)
 
+    from .report import report as report_blueprint
+    app.register_blueprint(report_blueprint)
+
     return app

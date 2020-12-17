@@ -41,6 +41,9 @@
                 <div class="navbar-nav">
                     <a class="nav-item nav-link" href="{{ url_for('receiver.create') }}">Dodaj użytkownika</a>
                 </div>
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link" href="{{ url_for('report.show') }}">Stwórz raport</a>
+                </div>
                 {% if current_user.is_authenticated %}
                 <div class="navbar-nav">
                     <a class="nav-item nav-link" href="{{ url_for('auth.logout') }}">Wyloguj się</a>

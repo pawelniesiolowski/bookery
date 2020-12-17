@@ -51,6 +51,14 @@ class Book(db.Model):
         assert value and value > Decimal('0') and value <= datetime.now().year
         return value
 
+    def to_basic_data(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'isbn': self.isbn,
+            'price': self.price,
+        }
+
     def save(self):
         db.session.add(self)
         db.session.commit()
