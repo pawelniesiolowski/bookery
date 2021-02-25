@@ -12,6 +12,7 @@ class Book(db.Model):
     isbn = db.Column(db.String(17), nullable=True)
     price = db.Column(db.Numeric(7, 2), nullable=True)
     publication_year = db.Column(db.Numeric(4, 0), nullable=True)
+    image_name = db.Column(db.String(255), nullable=True)
     inserted_at = db.Column(db.DateTime, nullable=False)
     deleted_at = db.Column(db.DateTime)
 
@@ -75,6 +76,7 @@ class Book(db.Model):
     isbn: {self.isbn},
     price: {self.price},
     publication_year: {self.publication_year},
+    image_name: {self.image_name},
     inserted_at: {self.inserted_at},
     deleted_at: {self.deleted_at}
 >'''
