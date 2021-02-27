@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.fields.html5 import IntegerField, DecimalField
 from wtforms import StringField, SubmitField
 from wtforms.validators import (
@@ -67,4 +68,15 @@ class BookForm(FlaskForm):
         'Rok publikacji:',
         validators=[Optional(), validate_year]
     )
+    submit = SubmitField('Zapisz')
+
+
+class ImageForm(FlaskForm):
+    image = FileField('Zdjęcie:', validators=[
+        FileRequired('Zdjęcie jest wymagane'),
+        FileAllowed(
+            ['jpg', 'png'],
+            'Można dodać tylko obrazki w formatach jpg i png'
+        )
+    ])
     submit = SubmitField('Zapisz')

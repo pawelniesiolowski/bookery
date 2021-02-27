@@ -6,5 +6,5 @@ def does_book_exist(book_id):
 
 
 def get_all_books():
-    books = books_ordered_by_title();
+    books = books_ordered_by_title()
     return [book.to_basic_data() for book in books]

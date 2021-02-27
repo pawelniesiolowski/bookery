@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block subtitle %}Dodaj zdjęcie{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            {{ form.image(class='form-control-file') }}
+                            {% if form.errors %}
+                                <div>
+                                    {% for error in form.errors.image %}
+                                        <span class="form-error">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {{ form.submit() }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

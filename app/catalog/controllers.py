@@ -6,11 +6,13 @@ from sqlalchemy.exc import SQLAlchemyError
 from . import catalog
 from .. import db
 from datetime import datetime
-from .forms import BookForm
+from .forms import BookForm, ImageForm
 from .models import Book
 from .repo import books_ordered_by_title, book_by_id, does_title_exist
 from app.bookaction.service import copies_for_book, actions_for_book
 from flask_login import login_required
+import os
+from .image_processor import ImageProcessor
 
 
 @catalog.route('/')
@@ -39,9 +41,16 @@ def one(book_id):
     copies = copies_for_book(book_id)
     actions = actions_for_book(book_id)
 
+    image_processor = ImageProcessor(
+        current_app.static_folder,
+        current_app.logger
+    )
+    image_path = image_processor.create_relative_path(book.image_name)
+
     return render_template(
         'catalog/book.html',
         book=book,
+        image_path=image_path,
         copies=copies,
         actions=actions
     )
@@ -144,3 +153,44 @@ def exists(title):
         abort(500)
 
     return jsonify({'data': exists}), 200
+
+
+@catalog.route('/books/<int:book_id>/image', methods=['GET', 'POST'])
+@login_required
+def upload_image(book_id):
+    form = ImageForm()
+    if form.validate_on_submit():
+        try:
+            book = book_by_id(book_id)
+        except SQLAlchemyError as e:
+            current_app.logger.error(e)
+            abort(500)
+
+        if book is None:
+            abort(404)
+
+        image_processor = ImageProcessor(
+            current_app.static_folder,
+            current_app.logger
+        )
+        new_image_name = image_processor.process(form.image.data)
+        previous_image_name = book.image_name
+        book.image_name = new_image_name
+
+        try:
+            book.save()
+        except SQLAlchemyError as e:
+            current_app.logger.error(e)
+            db.session.rollback()
+            image_processor.remove(new_image_name)
+            abort(500)
+
+        if previous_image_name:
+            image_processor.remove(previous_image_name)
+
+        return redirect(url_for('catalog.one', book_id=book_id))
+
+    return render_template(
+        'catalog/image_form.html',
+        form=form
+    )
