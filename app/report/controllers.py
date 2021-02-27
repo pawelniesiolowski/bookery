@@ -7,6 +7,7 @@ from app.bookaction.service import copies_for_book
 from .xml_report import XmlBooksReport
 import io
 
+
 @report.route('/report')
 @login_required
 def show():
@@ -26,9 +27,14 @@ def show():
     report.save(out)
     out.seek(0)
 
+    mimetype = (
+        'application/'
+        'vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+
     return send_file(
         out,
-        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        mimetype=mimetype,
         attachment_filename='report.xlsx',
         as_attachment=True
     )
