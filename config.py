@@ -15,6 +15,8 @@ class Config:
     LOG_FILE = '/var/log/bookery.log'
     LOG_LEVEL = logging.DEBUG
     SEND_FILE_MAX_AGE_DEFAULT = 0
+    IMAGES_WRITE_DIR = '/var/www/images/bookery/uploaded'
+    IMAGES_READ_DIR = '/static/uploaded'
 
     @staticmethod
     def init_app(app):

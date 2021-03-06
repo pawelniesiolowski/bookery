@@ -6,8 +6,8 @@ import time
 
 class ImageProcessor:
 
-    def __init__(self, static_dir, logger):
-        self.static_dir = static_dir
+    def __init__(self, images_dir, logger):
+        self.images_dir = images_dir
         self.logger = logger
 
     def process(self, image):
@@ -30,12 +30,6 @@ class ImageProcessor:
             self.logger.error(e)
 
     def create_path(self, image_name):
-        return self._do_create_path(self.static_dir, image_name)
-
-    def create_relative_path(self, image_name):
-        return self._do_create_path('/static', image_name)
-
-    def _do_create_path(self, static_dir, image_name):
         if not image_name:
             return ''
-        return os.path.join(static_dir, 'book_img', image_name)
+        return os.path.join(self.images_dir, image_name)

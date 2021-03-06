@@ -42,10 +42,10 @@ def one(book_id):
     actions = actions_for_book(book_id)
 
     image_processor = ImageProcessor(
-        current_app.static_folder,
+        current_app.config['IMAGES_READ_DIR'],
         current_app.logger
     )
-    image_path = image_processor.create_relative_path(book.image_name)
+    image_path = image_processor.create_path(book.image_name)
 
     return render_template(
         'catalog/book.html',
@@ -170,7 +170,7 @@ def upload_image(book_id):
             abort(404)
 
         image_processor = ImageProcessor(
-            current_app.static_folder,
+            current_app.config['IMAGES_WRITE_DIR'],
             current_app.logger
         )
         new_image_name = image_processor.process(form.image.data)
