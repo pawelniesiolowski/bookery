@@ -16,6 +16,7 @@
                         <th scope="col">Cena</th>
                         <th scope="col">Rok publikacji</th>
                         <th scope="col">Data dodania</th>
+                        <th scope="col">Egz.</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,6 +29,7 @@
                         <td>{{ book.price if book.price }}</td>
                         <td>{{ book.publication_year if book.publication_year }}</td>
                         <td>{{ book.inserted_at.strftime('%d-%m-%Y') }}</td>
+                        <td>{{ copies_for_ids[book.id] }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

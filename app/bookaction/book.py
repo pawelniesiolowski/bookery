@@ -5,26 +5,24 @@ class Book:
     def __init__(self, events, *, book_id):
         assert isinstance(book_id, int) and book_id > 0, \
             'Book id must be number greater than zero'
-        self.book_id = book_id
-        self.copies = Copies(0)
-        self.apply_events(events)
-        self.events = events
+        self._book_id = book_id
+        self._copies = Copies(0)
 
-    def apply_events(self, events):
-        for event in events:
-            if event.name == BookActionName.RECEIVE:
-                self.copies = self.copies.add(Copies(event.copies))
-            elif event.name == BookActionName.RELEASE:
-                self.copies = self.copies.subtract(Copies(event.copies))
-            elif event.name == BookActionName.SELL:
-                self.copies = self.copies.subtract(Copies(event.copies))
-            else:
-                raise ValueError(f'Event with invalid name: #{event.name}, \
-was applied to book with id: #{self.book_id}')
+        events.sort(key=lambda event: event.inserted_at)
+        self._apply_events(events)
+        self._events = events
+
+    @property
+    def book_id(self):
+        return self._book_id
+
+    @property
+    def copies(self):
+        return self._copies
 
     def receive(self, copies):
         validate_copies(copies)
-        self.copies = self.copies.add(copies)
+        self._copies = self.copies.add(copies)
         return BookAction(
             BookActionName.RECEIVE,
             copies.to_int(),
@@ -33,7 +31,7 @@ was applied to book with id: #{self.book_id}')
 
     def release(self, copies, *, receiver_id, comment=None):
         validate_copies(copies)
-        self.copies = self.copies.subtract(copies)
+        self._copies = self.copies.subtract(copies)
         return BookAction(
             BookActionName.RELEASE,
             copies.to_int(),
@@ -44,7 +42,7 @@ was applied to book with id: #{self.book_id}')
 
     def sell(self, copies):
         validate_copies(copies)
-        self.copies = self.copies.subtract(copies)
+        self._copies = self.copies.subtract(copies)
         return BookAction(
             BookActionName.SELL,
             copies.to_int(),
@@ -53,12 +51,12 @@ was applied to book with id: #{self.book_id}')
 
     def sell_released(self, copies, *, release_id):
         validate_copies(copies)
-        for event in self.events:
+        for event in self._events:
             if event.id == release_id:
-                return self.do_sell_released(event, copies)
+                return self._do_sell_released(event, copies)
         raise ValueError(f'Release action with id {release_id} does not exist')
 
-    def do_sell_released(self, action, copies):
+    def _do_sell_released(self, action, copies):
         sold = copies.to_int()
         if action.copies > sold:
             action.copies = action.copies - sold
@@ -78,6 +76,18 @@ was applied to book with id: #{self.book_id}')
         else:
             msg = 'Selled copies must be greater or equals to released copies'
             raise ValueError(msg)
+
+    def _apply_events(self, events):
+        for event in events:
+            if event.name == BookActionName.RECEIVE:
+                self._copies = self.copies.add(Copies(event.copies))
+            elif event.name == BookActionName.RELEASE:
+                self._copies = self.copies.subtract(Copies(event.copies))
+            elif event.name == BookActionName.SELL:
+                self._copies = self.copies.subtract(Copies(event.copies))
+            else:
+                raise ValueError(f'Event with invalid name: #{event.name}, \
+was applied to book with id: #{self.book_id}')
 
 
 class Copies:

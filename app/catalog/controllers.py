@@ -9,7 +9,7 @@ from datetime import datetime
 from .forms import BookForm, ImageForm
 from .models import Book
 from .repo import books_ordered_by_title, book_by_id, does_title_exist
-from app.bookaction.service import copies_for_book, actions_for_book
+from app.bookaction import service as book_action_service
 from flask_login import login_required
 import os
 from .image_processor import ImageProcessor
@@ -19,11 +19,17 @@ from .image_processor import ImageProcessor
 def index():
     try:
         books = books_ordered_by_title()
+        ids = [book.id for book in books]
+        copies_for_ids = book_action_service.copies_for_books(ids)
     except SQLAlchemyError as e:
         current_app.logger.error(e)
         abort(500)
 
-    return render_template('catalog/index.html', books=books)
+    return render_template(
+        'catalog/index.html',
+        books=books,
+        copies_for_ids=copies_for_ids
+    )
 
 
 @catalog.route('/books/<int:book_id>')
@@ -38,8 +44,8 @@ def one(book_id):
     if book is None:
         abort(404)
 
-    copies = copies_for_book(book_id)
-    actions = actions_for_book(book_id)
+    copies = book_action_service.copies_for_book(book_id)
+    actions = book_action_service.actions_for_book(book_id)
 
     image_processor = ImageProcessor(
         current_app.config['IMAGES_READ_DIR'],

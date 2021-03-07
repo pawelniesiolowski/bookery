@@ -19,13 +19,17 @@ class BookAction(db.Model):
     comment = db.Column(db.String(255), nullable=True)
     inserted_at = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, name, copies, *, book_id, receiver_id=None, **kwargs):
+    def __init__(
+        self, name, copies, *,
+        book_id, receiver_id=None, inserted_at=None,
+        **kwargs
+    ):
         super(BookAction, self).__init__(**kwargs)
         self.name = name
         self.copies = copies
         self.book_id = book_id
         self.receiver_id = receiver_id
-        self.inserted_at = datetime.now()
+        self.inserted_at = inserted_at or datetime.now()
 
     @validates('name')
     def validate_name(self, key, value):

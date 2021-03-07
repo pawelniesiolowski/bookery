@@ -1,6 +1,7 @@
 from app.bookaction.book import Book, Copies
 from app.bookaction.models import BookAction, BookActionName
 import pytest
+import datetime
 
 
 def test_it_calculates_copies_from_receive_events():
@@ -67,6 +68,17 @@ def test_it_raises_error_if_calculates_less_copies_than_zero():
         action = book.release(Copies(5), receiver_id=1)
 
 
+def test_it_apply_events_ordered_by_date_desc():
+    actions = [
+        BookAction(BookActionName.RELEASE, 10, book_id=1, receiver_id=1, inserted_at=datetime.datetime(2021, 2, 1)),
+        BookAction(BookActionName.RECEIVE, 10, book_id=1, inserted_at=datetime.datetime(2021, 1, 1)),
+        BookAction(BookActionName.SELL, 5, book_id=1, inserted_at=datetime.datetime(2021, 2, 15)),
+        BookAction(BookActionName.RECEIVE, 6, book_id=1, inserted_at=datetime.datetime(2021, 2, 10)),
+    ]
+    book = Book(actions, book_id=1)
+    assert book.copies.to_int() == 1
+
+
 def test_it_sells_released_books():
     BookAction.save_in_transaction = lambda self: setattr(self, 'saved', True)
     BookAction.delete_in_transaction = (
@@ -77,10 +89,11 @@ def test_it_sells_released_books():
         5,
         book_id=1,
         receiver_id=1,
-        id=2
+        id=2,
+        inserted_at=datetime.datetime(2021, 1, 2)
     )
     actions = [
-        BookAction(BookActionName.RECEIVE, 10, book_id=1),
+        BookAction(BookActionName.RECEIVE, 10, book_id=1, inserted_at=datetime.datetime(2021, 1, 1)),
         released
     ]
     book = Book(actions, book_id=1)
@@ -102,10 +115,11 @@ def test_it_sells_all_released_books():
         5,
         book_id=1,
         receiver_id=1,
-        id=2
+        id=2,
+        inserted_at=datetime.datetime(2021, 1, 2)
     )
     actions = [
-        BookAction(BookActionName.RECEIVE, 10, book_id=1),
+        BookAction(BookActionName.RECEIVE, 10, book_id=1, inserted_at=datetime.datetime(2021, 1, 1)),
         released
     ]
     book = Book(actions, book_id=1)
@@ -123,10 +137,11 @@ def test_it_raises_error_if_selled_copies_are_greater_than_released_copies():
         5,
         book_id=1,
         receiver_id=1,
-        id=2
+        id=2,
+        inserted_at=datetime.datetime(2021, 1, 2)
     )
     actions = [
-        BookAction(BookActionName.RECEIVE, 10, book_id=1),
+        BookAction(BookActionName.RECEIVE, 10, book_id=1, inserted_at=datetime.datetime(2021, 1, 1)),
         released
     ]
     book = Book(actions, book_id=1)
@@ -142,10 +157,11 @@ def test_it_raises_error_if_released_id_does_not_exist():
         5,
         book_id=1,
         receiver_id=1,
-        id=2
+        id=2,
+        inserted_at=datetime.datetime(2021, 1, 2)
     )
     actions = [
-        BookAction(BookActionName.RECEIVE, 10, book_id=1),
+        BookAction(BookActionName.RECEIVE, 10, book_id=1, inserted_at=datetime.datetime(2021, 1, 1)),
         released
     ]
     book = Book(actions, book_id=1)
@@ -161,10 +177,11 @@ def test_it_raises_error_if_selled_copies_equals_to_zero():
         5,
         book_id=1,
         receiver_id=1,
-        id=2
+        id=2,
+        inserted_at=datetime.datetime(2021, 1, 2)
     )
     actions = [
-        BookAction(BookActionName.RECEIVE, 10, book_id=1),
+        BookAction(BookActionName.RECEIVE, 10, book_id=1, inserted_at=datetime.datetime(2021, 1, 1)),
         released
     ]
     book = Book(actions, book_id=1)
