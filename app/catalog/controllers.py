@@ -16,6 +16,7 @@ from .image_processor import ImageProcessor
 
 
 @catalog.route('/')
+@login_required
 def index():
     try:
         books = books_ordered_by_title()
