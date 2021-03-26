@@ -25,7 +25,7 @@
             <h3 class="bookery-book-action-title">Egzemplarze: <strong>{{ copies }}</strong></h3>
             <div id="bookery-book-action" class="bookery-book-action" data-name="{{ book.title }}">
                 <button type="button" id="bookery-receive" data-href="{{ url_for('bookaction.receive', book_id=book.id) }}" class="btn btn-success bookery-action">Dodaj</button>
-                <button type="button" id="bookery-release" data-href="{{ url_for('bookaction.release', book_id=book.id) }}" data-receivershref="{{ url_for('receiver.all') }}" class="btn btn-primary bookery-action">Wydaj</button>
+                <button type="button" id="bookery-release" data-href="{{ url_for('bookaction.release', book_id=book.id) }}" data-receivershref="{{ url_for('receiver.show_all') }}" class="btn btn-primary bookery-action">Wydaj</button>
                 <button type="button" id="bookery-sell" data-href="{{ url_for('bookaction.sell', book_id=book.id) }}" class="btn btn-warning bookery-action">Sprzedaj</button>
             </div>
         </div>

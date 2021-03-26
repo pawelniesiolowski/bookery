@@ -1,5 +1,8 @@
-from app.bookaction.models import BookAction, BookActionName
+"""Test database models"""
+
+
 import pytest
+from app.bookaction.models import BookAction, BookActionName
 
 
 def test_it_is_created_with_receive_action():

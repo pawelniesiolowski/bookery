@@ -1,6 +1,11 @@
+"""Test controllers"""
+# pylint: disable=redefined-outer-name
+
+
+# pylint: disable=unused-import
 from tests.fixture import client
+# pylint: enable=unused-import
 from app.catalog.models import Book
-from app import db
 
 
 def test_it_gets_new_receiver_form(client):
@@ -73,9 +78,12 @@ def test_it_returns_true_if_book_with_given_title_exists(client):
     assert response.get_json()['data'] is True
 
 
-def test_it_returns_true_if_book_with_given_title_exists(client):
+def test_it_returns_false_if_book_with_given_title_does_not_exist(client):
     book = {'title': 'Test Book'}
     client.post('/books/form', data=book)
     response = client.get('/books/Test Book 2/exists')
     assert response.status_code == 200
     assert response.get_json()['data'] is False
+
+
+# pylint: enable=redefined-outer-name

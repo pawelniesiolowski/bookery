@@ -1,7 +1,10 @@
-from app.catalog.models import Book
-import pytest
+"""Test book in catalog"""
+
+
 from decimal import Decimal
 from datetime import datetime
+import pytest
+from app.catalog.models import Book
 
 
 def test_it_is_created_with_title():

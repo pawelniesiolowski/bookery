@@ -1,5 +1,8 @@
-from app.receiver.models import Receiver
+"""Test receiver model"""
+
+
 import pytest
+from app.receiver.models import Receiver
 
 
 def test_it_is_created_with_name_and_surname():

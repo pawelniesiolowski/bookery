@@ -1,3 +1,6 @@
+"""Creating app"""
+
+
 import os
 from app import create_app
 

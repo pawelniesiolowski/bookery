@@ -1,3 +1,6 @@
+"""Client fixture for integration tests"""
+
+
 import pytest
 from app import create_app, db
 
@@ -8,8 +11,8 @@ def client():
     app_context = app.app_context()
     app_context.push()
     db.create_all()
-    client = app.test_client()
-    yield client
+    app_client = app.test_client()
+    yield app_client
 
     db.session.remove()
     db.drop_all()

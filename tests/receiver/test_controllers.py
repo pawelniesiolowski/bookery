@@ -1,4 +1,9 @@
+"""Test controllers"""
+# pylint: disable=redefined-outer-name
+
+# pylint: disable=unused-import
 from tests.fixture import client
+# pylint: enable=unused-import
 from app.receiver.models import Receiver
 
 
@@ -102,3 +107,6 @@ def test_it_gets_receivers_data(client):
     assert response.status_code == 200
     assert data['status'] == 200
     assert len(data['data']) == 2
+
+
+# pylint: enable=redefined-outer-name

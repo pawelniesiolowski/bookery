@@ -1,20 +1,25 @@
+"""Service for processing uploaded images data"""
+
+
 import os
-from werkzeug.utils import secure_filename
-from PIL import Image
 import time
+from typing import Optional
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import FileStorage
+from PIL import Image
 
 
 class ImageProcessor:
-
-    def __init__(self, images_dir, logger):
+    def __init__(self, images_dir: str) -> None:
         self.images_dir = images_dir
-        self.logger = logger
 
-    def process(self, image):
+    def process(self, image: FileStorage) -> str:
+        assert image.filename, 'Image filename is required'
+
         filename = '{time}_{name}'.format(
             time=str(int(time.time())),
             name=secure_filename(image.filename)
-        )
+            )
         path = self.create_path(filename)
         image.save(path)
 
@@ -23,13 +28,10 @@ class ImageProcessor:
         image.save(path)
         return filename
 
-    def remove(self, image_name):
-        try:
-            os.remove(self.create_path(image_name))
-        except OSError as e:
-            self.logger.error(e)
+    def remove(self, image_name: str) -> None:
+        os.remove(self.create_path(image_name))
 
-    def create_path(self, image_name):
+    def create_path(self, image_name: Optional[str]) -> str:
         if not image_name:
             return ''
         return os.path.join(self.images_dir, image_name)

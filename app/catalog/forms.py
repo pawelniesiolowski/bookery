@@ -1,3 +1,8 @@
+"""Forms"""
+
+
+from __future__ import annotations
+from datetime import datetime
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.fields.html5 import IntegerField, DecimalField
@@ -7,18 +12,17 @@ from wtforms.validators import (
     Length,
     Optional,
     Regexp,
-    NumberRange
-)
-from .isbn_validator import ISBNValidator
-from datetime import datetime
-from wtforms.validators import ValidationError
+    NumberRange,
+    ValidationError
+    )
+from . import isbn_validator
 
 
-def validate_year(form, field):
+def validate_year(_: FlaskForm, field: IntegerField) -> None:
     if field.data < 0 or field.data > datetime.now().year:
         raise ValidationError(
             'Rok musi być większy od zera i mniejszy lub równy aktualnemu'
-        )
+            )
 
 
 class BookForm(FlaskForm):
@@ -28,8 +32,8 @@ class BookForm(FlaskForm):
             min=2,
             max=255,
             message='Tytuł książki musi mieć od 2 do 255 znaków'
-        )
-    ])
+            )
+        ])
     authors = StringField(
         'Autor:',
         filters=[lambda authors: authors or None],
@@ -39,20 +43,20 @@ class BookForm(FlaskForm):
                 min=2,
                 max=255,
                 message='Autor książki musi mieć od 2 do 255 znaków'
-            )
-        ]
-    )
+                )
+            ]
+        )
     isbn = StringField(
         'ISBN:',
         filters=[lambda isbn: isbn or None],
         validators=[
             Optional(),
             Regexp(
-                ISBNValidator.regex,
+                isbn_validator.REGEX,
                 message='ISBN musi się składać z 11 lub 13 cyfr'
-            )
-        ]
-    )
+                )
+            ]
+        )
     price = DecimalField(
         'Cena:',
         validators=[
@@ -61,13 +65,13 @@ class BookForm(FlaskForm):
                 min=0,
                 max=99999.99,
                 message='Cena musi być w wysokości od 0 do 99999.99 zł'
-            )
-        ]
-    )
+                )
+            ]
+        )
     publication_year = IntegerField(
         'Rok publikacji:',
         validators=[Optional(), validate_year]
-    )
+        )
     submit = SubmitField('Zapisz')
 
 
@@ -77,6 +81,6 @@ class ImageForm(FlaskForm):
         FileAllowed(
             ['jpg', 'png'],
             'Można dodać tylko obrazki w formatach jpg i png'
-        )
-    ])
+            )
+        ])
     submit = SubmitField('Zapisz')

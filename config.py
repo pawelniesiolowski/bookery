@@ -1,6 +1,11 @@
+"""Config"""
+
+
 import os
 import logging
 from enum import Enum
+from typing import Optional
+from flask import Flask
 
 
 class ConfigName(Enum):
@@ -11,7 +16,7 @@ class ConfigName(Enum):
 
 class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SECRET_KEY = 'secret'
+    SECRET_KEY: Optional[str] = 'secret'
     LOG_FILE = '/var/log/bookery.log'
     LOG_LEVEL = logging.DEBUG
     SEND_FILE_MAX_AGE_DEFAULT = 0
@@ -19,7 +24,7 @@ class Config:
     IMAGES_READ_DIR = '/static/uploaded'
 
     @staticmethod
-    def init_app(app):
+    def init_app(app: Flask) -> None:
         pass
 
 
@@ -55,4 +60,4 @@ config = {
     'development': DevelopmentConfig,
     'test': TestConfig,
     'default': DevelopmentConfig
-}
+    }

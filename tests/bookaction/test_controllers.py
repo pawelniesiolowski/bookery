@@ -1,8 +1,13 @@
+"""Test controllers"""
+# pylint: disable=redefined-outer-name
+
+
+# pylint: disable=unused-import
 from tests.fixture import client
+# pylint: enable=unused-import
 from app.bookaction.models import BookAction, BookActionName
 from app.catalog.models import Book
 from app.receiver.models import Receiver
-from app import db
 
 
 def test_it_creates_receive_book_action(client):
@@ -99,3 +104,6 @@ def create_book():
 def create_receiver():
     receiver = Receiver('Paweł', 'Niesiołowski')
     receiver.save()
+
+
+# pylint: enable=redefined-outer-name

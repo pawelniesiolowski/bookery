@@ -1,4 +1,6 @@
-import pytest
+"""Test book copies calculator"""
+
+
 from app.bookaction.models import BookAction, BookActionName
 from app.bookaction.books_copies_calculator import calculate
 

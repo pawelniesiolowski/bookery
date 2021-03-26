@@ -1,62 +1,66 @@
+"""Controllers"""
+
+
+from typing import Union, Tuple
 from flask import (
     request, render_template, redirect,
     url_for, flash, abort, current_app, jsonify
-)
+    )
+from flask_login import login_required
 from sqlalchemy.exc import SQLAlchemyError
-from . import receiver
+from werkzeug.wrappers import Response
+from .. import db
+from . import receiver as receiver_module
 from .forms import ReceiverForm
 from .models import Receiver
-from .repo import (
-    receivers_ordered_by_surname, receiver_by_id, receiver_by_name
-)
-from flask_login import login_required
+from . import repo
 
 
-@receiver.route('/receivers/index')
+@receiver_module.route('/receivers/index')
 @login_required
-def index():
+def index() -> Union[str, Response]:
     try:
-        receivers = receivers_ordered_by_surname()
-    except SQLAlchemyError as e:
-        current_app.logger.error(e)
+        receivers = repo.receivers_ordered_by_surname()
+    except SQLAlchemyError as ex:
+        current_app.logger.error(ex)
         abort(500)
 
     return render_template('receiver/index.html', receivers=receivers)
 
 
-@receiver.route('/receivers/form', methods=['GET', 'POST'])
+@receiver_module.route('/receivers/form', methods=['GET', 'POST'])
 @login_required
-def create():
+def create() -> Union[str, Response]:
     form = ReceiverForm(request.form)
     if form.validate_on_submit():
         receiver = Receiver(form.name.data, form.surname.data)
         try:
-            existing_receiver = receiver_by_name(
+            existing_receiver = repo.receiver_by_name(
                 receiver.name,
                 receiver.surname
-            )
-        except SQLAlchemyError as e:
-            current_app.logger.error(e)
+                )
+        except SQLAlchemyError as ex:
+            current_app.logger.error(ex)
             abort(500)
 
         if existing_receiver and existing_receiver.deleted_at is None:
             flash(
                 f'Użytkownik: {receiver.name} {receiver.surname} już istnieje',
                 'error'
-            )
+                )
             return render_template(
                 'receiver/form.html',
                 form=form,
                 subtitle='Dodaj użytkownika'
-            )
-        elif existing_receiver:
+                )
+        if existing_receiver:
             receiver = existing_receiver
             receiver.deleted_at = None
 
         try:
             receiver.save()
-        except SQLAlchemyError as e:
-            current_app.logger.error(e)
+        except SQLAlchemyError as ex:
+            current_app.logger.error(ex)
             db.session.rollback()
             abort(500)
 
@@ -67,16 +71,19 @@ def create():
         'receiver/form.html',
         form=form,
         subtitle='Dodaj użytkownika'
+        )
+
+
+@receiver_module.route(
+    '/receivers/<int:receiver_id>/form',
+    methods=['GET', 'POST']
     )
-
-
-@receiver.route('/receivers/<int:receiver_id>/form', methods=['GET', 'POST'])
 @login_required
-def edit(receiver_id):
+def edit(receiver_id: int) -> Union[str, Response, Tuple[str, int]]:
     try:
-        receiver = receiver_by_id(receiver_id)
-    except SQLAlchemyError as e:
-        current_app.logger.error(e)
+        receiver = repo.receiver_by_id(receiver_id)
+    except SQLAlchemyError as ex:
+        current_app.logger.error(ex)
         abort(500)
 
     if receiver is None:
@@ -89,8 +96,8 @@ def edit(receiver_id):
         form.populate_obj(receiver)
         try:
             receiver.save()
-        except SQLAlchemyError as e:
-            current_app.logger.error(e)
+        except SQLAlchemyError as ex:
+            current_app.logger.error(ex)
             db.session.rollback()
             abort(500)
 
@@ -102,16 +109,16 @@ def edit(receiver_id):
         'receiver/form.html',
         form=form,
         subtitle=f'Edytuj dane użytkownika: {receiver.name} {receiver.surname}'
-    )
+        )
 
 
-@receiver.route('/receivers/<int:receiver_id>', methods=['DELETE'])
+@receiver_module.route('/receivers/<int:receiver_id>', methods=['DELETE'])
 @login_required
-def delete(receiver_id):
+def delete(receiver_id: int) -> Union[Tuple[str, int], Response]:
     try:
-        receiver = receiver_by_id(receiver_id)
-    except SQLAlchemyError as e:
-        current_app.logger.error(e)
+        receiver = repo.receiver_by_id(receiver_id)
+    except SQLAlchemyError as ex:
+        current_app.logger.error(ex)
         abort(500)
 
     if receiver is None:
@@ -121,8 +128,8 @@ def delete(receiver_id):
 
     try:
         receiver.save()
-    except SQLAlchemyError as e:
-        current_app.logger.error(e)
+    except SQLAlchemyError as ex:
+        current_app.logger.error(ex)
         db.session.rollback()
         abort(500)
 
@@ -130,17 +137,17 @@ def delete(receiver_id):
     return '', 204
 
 
-@receiver.route('/receivers')
+@receiver_module.route('/receivers')
 @login_required
-def all():
+def show_all() -> Union[Tuple[str, int], Response]:
     try:
-        receivers = receivers_ordered_by_surname()
-    except SQLAlchemyError as e:
-        current_app.logger.error(e)
+        receivers = repo.receivers_ordered_by_surname()
+    except SQLAlchemyError as ex:
+        current_app.logger.error(ex)
         abort(500)
 
     data = [receiver.format() for receiver in receivers]
     return jsonify({
         'status': 200,
         'data': data
-    }), 200
+        }), 200

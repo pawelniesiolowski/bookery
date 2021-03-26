@@ -1,3 +1,6 @@
+"""Managing database migrations"""
+
+
 import os
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
@@ -11,8 +14,13 @@ manager.add_command('db', MigrateCommand)
 
 
 if __name__ == '__main__':
+    # pylint: disable=unused-import
+
     from app.catalog.models import Book
     from app.receiver.models import Receiver
     from app.bookaction.models import BookAction
     from app.auth.models import User
+
+    # pylint: enable=unused-import
+
     manager.run()

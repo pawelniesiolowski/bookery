@@ -1,15 +1,18 @@
-from flask import Flask
+"""App"""
+
+
+from flask import Flask, logging
 from flask_sqlalchemy import SQLAlchemy
-from config import config, ConfigName
 from flask_cors import CORS
+
+from config import config, ConfigName
 from .logger import setup_logger
-from flask.logging import default_handler
 
 
 db = SQLAlchemy()
 
 
-def create_app(config_name):
+def create_app(config_name: str) -> Flask:
     app = Flask(__name__)
 
     CORS(app)
@@ -18,10 +21,14 @@ def create_app(config_name):
     config[config_name].init_app(app)
 
     if app.config['NAME'] == ConfigName.PRODUCTION:
-        app.logger.removeHandler(default_handler)
+        # pylint: disable=no-member
+        app.logger.removeHandler(logging.default_handler)
+        # pylint: enable=no-member
         setup_logger(app)
 
     db.init_app(app)
+
+    # pylint: disable=import-outside-toplevel, cyclic-import
 
     from .catalog import catalog as catalog_blueprint
     app.register_blueprint(catalog_blueprint)
@@ -38,5 +45,7 @@ def create_app(config_name):
 
     from .report import report as report_blueprint
     app.register_blueprint(report_blueprint)
+
+    # pylint: enable=import-outside-toplevel, cyclic-import
 
     return app

@@ -1,11 +1,18 @@
+"""Service for counting book copies based on ids and events"""
+
+
+from typing import List, Dict
 from .book import Book
 from .models import BookAction
 
 
-def calculate(books_ids, events):
+def calculate(
+        books_ids: List[int],
+        events: List[BookAction]
+        ) -> Dict[int, int]:
     assert isinstance(books_ids, list) and isinstance(events, list)
 
-    events_for_ids = {}
+    events_for_ids: Dict[int, List[BookAction]] = {}
     for book_id in books_ids:
         if not isinstance(book_id, int):
             raise ValueError('Book id must be integer number')

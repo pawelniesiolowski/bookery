@@ -1,5 +1,7 @@
-from app.catalog.isbn_validator import ISBNValidator
-from re import match
+"""Test ISBN validator"""
+
+
+from app.catalog import isbn_validator
 
 
 def test_isbn_regex_matches_valid_isbn_examples():
@@ -10,7 +12,7 @@ def test_isbn_regex_matches_valid_isbn_examples():
         '8308011209'
     ]
     for isbn in isbn_examples:
-        assert ISBNValidator.is_valid(isbn)
+        assert isbn_validator.is_valid(isbn)
 
 
 def test_isbn_regex_does_not_match_invalid_isbn_examples():
@@ -21,4 +23,4 @@ def test_isbn_regex_does_not_match_invalid_isbn_examples():
         '83080112091'
     ]
     for isbn in isbn_examples:
-        assert not ISBNValidator.is_valid(isbn)
+        assert not isbn_validator.is_valid(isbn)
