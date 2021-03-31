@@ -2,6 +2,7 @@
 # pylint: disable=redefined-outer-name
 
 
+import pytest
 # pylint: disable=unused-import
 from tests.fixture import client
 # pylint: enable=unused-import
@@ -10,6 +11,7 @@ from app.catalog.models import Book
 from app.receiver.models import Receiver
 
 
+@pytest.mark.webtest
 def test_it_creates_receive_book_action(client):
     create_book()
     response = client.post('/receive/1', json={'copies': 5})
@@ -20,6 +22,7 @@ def test_it_creates_receive_book_action(client):
     assert action.copies == 5
 
 
+@pytest.mark.webtest
 def test_it_returns_404_if_received_book_does_not_exist(client):
     response = client.post('/receive/1', json={'copies': 5})
     assert response.status_code == 404
@@ -28,6 +31,7 @@ def test_it_returns_404_if_received_book_does_not_exist(client):
     assert not BookAction.query.get(1)
 
 
+@pytest.mark.webtest
 def test_it_returns_400_if_received_book_with_invalid_data(client):
     create_book()
     response = client.post('/receive/1', json={'copies': 0})
@@ -38,6 +42,7 @@ def test_it_returns_400_if_received_book_with_invalid_data(client):
     assert not BookAction.query.get(1)
 
 
+@pytest.mark.webtest
 def test_it_creates_release_book_action(client):
     create_book()
     create_receiver()
@@ -54,6 +59,7 @@ def test_it_creates_release_book_action(client):
     assert action.copies == 3
 
 
+@pytest.mark.webtest
 def test_it_creates_sell_book_action(client):
     create_book()
     create_receiver()
@@ -66,6 +72,7 @@ def test_it_creates_sell_book_action(client):
     assert action.copies == 5
 
 
+@pytest.mark.webtest
 def test_it_returns_404_if_gets_invalid_receiver_id(client):
     create_book()
     client.post('/receive/1', json={'copies': 5})
@@ -80,6 +87,7 @@ def test_it_returns_404_if_gets_invalid_receiver_id(client):
     assert not BookAction.query.get(2)
 
 
+@pytest.mark.webtest
 def test_it_returns_400_if_gets_invalid_copies_data(client):
     create_book()
     create_receiver()

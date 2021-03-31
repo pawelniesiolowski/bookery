@@ -2,12 +2,14 @@
 # pylint: disable=redefined-outer-name
 
 
+import pytest
 # pylint: disable=unused-import
 from tests.fixture import client
 # pylint: enable=unused-import
 from app.catalog.models import Book
 
 
+@pytest.mark.webtest
 def test_it_gets_new_receiver_form(client):
     response = client.get('/books/form')
     expected_text = '<h2 class="bookery-subtitle">Dodaj książkę</h2>'
@@ -15,6 +17,7 @@ def test_it_gets_new_receiver_form(client):
     assert expected_text in response.get_data(as_text=True)
 
 
+@pytest.mark.webtest
 def test_it_creates_book(client):
     book = {'title': 'Test Book'}
     expected_text = 'Dodano książkę: Test Book'
@@ -23,12 +26,14 @@ def test_it_creates_book(client):
     assert expected_text in response.get_data(as_text=True)
 
 
+@pytest.mark.webtest
 def test_it_shows_error_if_book_has_empty_title(client):
     response = client.post('/books/form', data={'title': ''})
     assert response.status_code == 200
     assert 'Tytuł jest wymagany' in response.get_data(as_text=True)
 
 
+@pytest.mark.webtest
 def test_it_shows_one_book(client):
     book = {'title': 'Test Book'}
     client.post('/books/form', data=book)
@@ -38,6 +43,7 @@ def test_it_shows_one_book(client):
     assert expected_text in response.get_data(as_text=True)
 
 
+@pytest.mark.webtest
 def test_it_gets_edit_receiver_form(client):
     book = {'title': 'Test Book'}
     client.post('/books/form', data=book)
@@ -48,6 +54,7 @@ Edytuj książkę: Test Book</h2>'
     assert expected_text in response.get_data(as_text=True)
 
 
+@pytest.mark.webtest
 def test_it_edits_book(client):
     book = {'title': 'Test Book'}
     client.post('/books/form', data=book)
@@ -62,6 +69,7 @@ def test_it_edits_book(client):
     assert expected_text in response.get_data(as_text=True)
 
 
+@pytest.mark.webtest
 def test_it_deletes_book(client):
     book = {'title': 'Test Book'}
     client.post('/books/form', data=book)
@@ -70,6 +78,7 @@ def test_it_deletes_book(client):
     assert Book.query.get(1).deleted_at
 
 
+@pytest.mark.webtest
 def test_it_returns_true_if_book_with_given_title_exists(client):
     book = {'title': 'Test Book'}
     client.post('/books/form', data=book)
@@ -78,6 +87,7 @@ def test_it_returns_true_if_book_with_given_title_exists(client):
     assert response.get_json()['data'] is True
 
 
+@pytest.mark.webtest
 def test_it_returns_false_if_book_with_given_title_does_not_exist(client):
     book = {'title': 'Test Book'}
     client.post('/books/form', data=book)

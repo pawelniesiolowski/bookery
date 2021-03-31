@@ -19,12 +19,15 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements_dev.txt
-    - name: Pylint
+    - name: Check code with Pylint
       run: |
         pylint app/ tests/
-    - name: Pycodestyle
+    - name: Check code with Pycodestyle
       run: |
         pycodestyle app/ tests/
-    - name: Mypy
+    - name: Check types with Mypy
       run: |
         mypy app/
+    - name: Test with Pytest
+      run: |
+        pytest -m "not webtest"
