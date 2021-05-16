@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block subtitle %}{{ subtitle|safe }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            {{ form.date.label }}<br>
+                            {{ form.date(class='form-control') }}
+                        </div>
+                    </div>
+                </div>
+
+                {{ form.submit() }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -7,6 +7,11 @@ from app.bookaction.book import Book, Copies
 from app.bookaction.models import BookAction, BookActionName
 
 
+def test_it_calculates_zero_copies_for_empty_events():
+    book = Book([], book_id=1)
+    assert book.copies.to_int() == 0
+
+
 def test_it_calculates_copies_from_receive_events():
     actions = [
         BookAction(BookActionName.RECEIVE, 2, book_id=1),
