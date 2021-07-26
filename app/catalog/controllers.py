@@ -1,6 +1,8 @@
 """Controllers"""
 
 
+from enum import Enum
+from decimal import Decimal
 from typing import Union, Tuple
 from flask import (
     request, render_template, redirect,
@@ -13,7 +15,7 @@ from app.bookaction import service as book_action
 from .. import db
 from . import catalog
 from .forms import BookForm, ImageForm
-from .models import Book
+from .models import Book, BookView
 from . import repo
 from .image_processor import ImageProcessor
 
@@ -21,21 +23,52 @@ from .image_processor import ImageProcessor
 @catalog.route('/')
 @login_required
 def index() -> Union[str, Response]:
-    # sorting = request.args.get('sorting', 'title')
+    sorting = request.args.get('sorting', SortingFields.TITLE.value)
 
     try:
-        books = repo.books_ordered_by_title()
+        books = []
+        if sorting == SortingFields.INSERTED_AT.value:
+            books = repo.books_ordered_by_date()
+        elif sorting == SortingFields.AUTHORS.value:
+            books = repo.books_ordered_by_authors()
+        elif sorting == SortingFields.PUBLICATION_YEAR.value:
+            books = repo.books_ordered_by_publication_year()
+        else:
+            books = repo.books_ordered_by_title()
+
         ids = [book.id for book in books]
         copies_for_ids = book_action.copies_for_books(ids)
     except SQLAlchemyError as ex:
         current_app.logger.error(ex)
         abort(500)
 
+    books_views = []
+    for book in books:
+        books_views.append(BookView(book, copies_for_ids[book.id]))
+
+    if sorting == SortingFields.COPIES.value:
+        books_views.sort(reverse=True, key=lambda book_view: book_view.copies)
+
+    if sorting == SortingFields.PRICE.value:
+        books_views.sort(
+            reverse=True,
+            key=lambda book_view: book_view.price or Decimal()
+            )
+
     return render_template(
         'catalog/index.html',
-        books=books,
-        copies_for_ids=copies_for_ids
+        books=books_views,
+        sorting=sorting
         )
+
+
+class SortingFields(Enum):
+    TITLE = 'title'
+    INSERTED_AT = 'inserted_at'
+    AUTHORS = 'authors'
+    PUBLICATION_YEAR = 'publication_year'
+    PRICE = 'price'
+    COPIES = 'copies'
 
 
 @catalog.route('/books/<int:book_id>')

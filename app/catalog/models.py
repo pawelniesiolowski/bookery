@@ -108,3 +108,29 @@ class Book(BaseModel):
     inserted_at: {self.inserted_at},
     deleted_at: {self.deleted_at}
 >'''
+
+
+class BookView:
+
+    def __init__(self, book: Book, copies: int):
+        self.id = book.id
+        self.title = book.title
+        self.authors = book.authors
+        self.isbn = book.isbn
+        self.price = book.price
+        self.publication_year = book.publication_year
+        self.inserted_at = book.inserted_at
+        self.copies = copies
+
+    def __repr__(self) -> str:
+        return f'''
+<BookView
+    id: {self.id},
+    title: {self.title},
+    authors: {self.authors},
+    isbn: {self.isbn},
+    price: {self.price},
+    publication_year: {self.publication_year},
+    inserted_at: {self.inserted_at},
+    copies: {self.copies}
+>'''

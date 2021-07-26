@@ -10,17 +10,17 @@
                 <thead>
                     <tr>
                         <th scope="col">Nr</th>
-                        <th scope="col">Tytuł</th>
-                        <th scope="col">Autor</th>
+                        <th scope="col"><a href="{{ url_for('catalog.index', sorting='title') }}" {% if sorting == 'title' %}class="text-success"{% endif %}>Tytuł</a></th>
+                        <th scope="col"><a href="{{ url_for('catalog.index', sorting='authors') }}" {% if sorting == 'authors' %}class="text-success"{% endif %}>Autor</a></th>
                         <th scope="col">ISBN</th>
-                        <th scope="col">Cena</th>
-                        <th scope="col">Rok publikacji</th>
-                        <th scope="col">Data dodania</th>
-                        <th scope="col">Egz.</th>
+                        <th scope="col"><a href="{{ url_for('catalog.index', sorting='price') }}" {% if sorting == 'price' %}class="text-success"{% endif %}>Cena</a></th>
+                        <th scope="col"><a href="{{ url_for('catalog.index', sorting='publication_year') }}" {% if sorting == 'publication_year' %}class="text-success"{% endif %}>Rok publikacji</a></th>
+                        <th scope="col"><a href="{{ url_for('catalog.index', sorting='inserted_at') }}" {% if sorting == 'inserted_at' %}class="text-success"{% endif %}>Data dodania</a></th>
+                        <th scope="col"><a href="{{ url_for('catalog.index', sorting='copies') }}" {% if sorting == 'copies' %}class="text-success"{% endif %}>Egz.</a></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for book in books%}
+                    {% for book in books %}
                     <tr>
                         <th scope="row">{{ loop.index }}</th>
                         <td><a href="{{ url_for('catalog.one', book_id=book.id) }}">{{ book.title }}</a></td>
@@ -29,7 +29,7 @@
                         <td>{{ book.price if book.price }}</td>
                         <td>{{ book.publication_year if book.publication_year }}</td>
                         <td>{{ book.inserted_at.strftime('%d-%m-%Y') }}</td>
-                        <td>{{ copies_for_ids[book.id] }}</td>
+                        <td>{{ book.copies }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
