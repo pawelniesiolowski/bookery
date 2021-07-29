@@ -37,6 +37,9 @@ class SortingTypes(Enum):
 @catalog.route('/')
 @login_required
 def index() -> Union[str, Response]:
+    sorting_fields = [sorting_field.value for sorting_field in SortingFields]
+    sorting_types = [sorting_type.value for sorting_type in SortingTypes]
+
     sorting_field = request.args.get(
         'sorting_field',
         SortingFields.TITLE.value
@@ -45,6 +48,13 @@ def index() -> Union[str, Response]:
         'sorting_type',
         SortingTypes.ASC.value
         )
+
+    if (
+        sorting_field not in sorting_fields
+        or sorting_type not in sorting_types
+    ):
+        sorting_field = SortingFields.TITLE.value
+        sorting_type = SortingTypes.ASC.value
 
     try:
         books = repo.all_existing(
