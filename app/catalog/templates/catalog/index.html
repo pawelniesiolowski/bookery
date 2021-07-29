@@ -1,3 +1,6 @@
+{% set icon_path = 'icons/arrow-up.svg' if sorting_type == 'asc' else 'icons/arrow-down.svg' %}
+{% set icon_alt = 'strzałka w górę' if sorting_type == 'asc' else 'strzałka w dół' %}
+
 {% extends 'base.html' %}
 
 {% block subtitle %}Katalog książek{% endblock %}
@@ -8,15 +11,45 @@
         <div class="table-responsive-xl">
             <table class="table table-striped">
                 <thead>
-                    <tr>
+                    <tr id="catalog-columns-names">
                         <th scope="col">Nr</th>
-                        <th scope="col"><a href="{{ url_for('catalog.index', sorting='title') }}" {% if sorting == 'title' %}class="text-success"{% endif %}>Tytuł</a></th>
-                        <th scope="col"><a href="{{ url_for('catalog.index', sorting='authors') }}" {% if sorting == 'authors' %}class="text-success"{% endif %}>Autor</a></th>
+                        <th scope="col">
+                            <a href="{{ url_for('catalog.index', sorting_field='title', sorting_type='desc' if sorting_field == 'title' and sorting_type == 'asc' else 'asc') }}">
+                                Tytuł
+                                {% if sorting_field == 'title' %}<img src="{{ url_for('static', filename=icon_path) }}" alt="{{ icon_alt }}">{% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="{{ url_for('catalog.index', sorting_field='authors', sorting_type='desc' if sorting_field == 'authors' and sorting_type == 'asc' else 'asc') }}">
+                                Autor
+                                {% if sorting_field == 'authors' %}<img src="{{ url_for('static', filename=icon_path) }}" alt="{{ icon_alt }}">{% endif %}
+                            </a>
+                        </th>
                         <th scope="col">ISBN</th>
-                        <th scope="col"><a href="{{ url_for('catalog.index', sorting='price') }}" {% if sorting == 'price' %}class="text-success"{% endif %}>Cena</a></th>
-                        <th scope="col"><a href="{{ url_for('catalog.index', sorting='publication_year') }}" {% if sorting == 'publication_year' %}class="text-success"{% endif %}>Rok publikacji</a></th>
-                        <th scope="col"><a href="{{ url_for('catalog.index', sorting='inserted_at') }}" {% if sorting == 'inserted_at' %}class="text-success"{% endif %}>Data dodania</a></th>
-                        <th scope="col"><a href="{{ url_for('catalog.index', sorting='copies') }}" {% if sorting == 'copies' %}class="text-success"{% endif %}>Egz.</a></th>
+                        <th scope="col">
+                            <a href="{{ url_for('catalog.index', sorting_field='price', sorting_type='desc' if sorting_field == 'price' and sorting_type == 'asc' else 'asc') }}">
+                                Cena
+                                {% if sorting_field == 'price' %}<img src="{{ url_for('static', filename=icon_path) }}" alt="{{ icon_alt }}">{% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="{{ url_for('catalog.index', sorting_field='publication_year', sorting_type='desc' if sorting_field == 'publication_year' and sorting_type == 'asc' else 'asc') }}">
+                                Rok publikacji
+                                {% if sorting_field == 'publication_year' %}<img src="{{ url_for('static', filename=icon_path) }}" alt="{{ icon_alt }}">{% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="{{ url_for('catalog.index', sorting_field='inserted_at', sorting_type='desc' if sorting_field == 'inserted_at' and sorting_type == 'asc' else 'asc') }}">
+                                Data dodania
+                                {% if sorting_field == 'inserted_at' %}<img src="{{ url_for('static', filename=icon_path) }}" alt="{{ icon_alt }}">{% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="{{ url_for('catalog.index', sorting_field='copies', sorting_type='desc' if sorting_field == 'copies' and sorting_type == 'asc' else 'asc') }}">
+                                Egz.
+                                {% if sorting_field == 'copies' %}<img src="{{ url_for('static', filename=icon_path) }}" alt="{{ icon_alt }}">{% endif %}
+                            </a>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>

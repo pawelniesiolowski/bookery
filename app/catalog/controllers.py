@@ -20,22 +20,36 @@ from . import repo
 from .image_processor import ImageProcessor
 
 
+class SortingFields(Enum):
+    TITLE = 'title'
+    INSERTED_AT = 'inserted_at'
+    AUTHORS = 'authors'
+    PUBLICATION_YEAR = 'publication_year'
+    PRICE = 'price'
+    COPIES = 'copies'
+
+
+class SortingTypes(Enum):
+    ASC = 'asc'
+    DESC = 'desc'
+
+
 @catalog.route('/')
 @login_required
 def index() -> Union[str, Response]:
-    sorting = request.args.get('sorting', SortingFields.TITLE.value)
+    sorting_field = request.args.get(
+        'sorting_field',
+        SortingFields.TITLE.value
+        )
+    sorting_type = request.args.get(
+        'sorting_type',
+        SortingTypes.ASC.value
+        )
 
     try:
-        books = []
-        if sorting == SortingFields.INSERTED_AT.value:
-            books = repo.books_ordered_by_date()
-        elif sorting == SortingFields.AUTHORS.value:
-            books = repo.books_ordered_by_authors()
-        elif sorting == SortingFields.PUBLICATION_YEAR.value:
-            books = repo.books_ordered_by_publication_year()
-        else:
-            books = repo.books_ordered_by_title()
-
+        books = repo.all_existing(
+            repo.BooksSorting(sorting_field, sorting_type)
+            )
         ids = [book.id for book in books]
         copies_for_ids = book_action.copies_for_books(ids)
     except SQLAlchemyError as ex:
@@ -46,29 +60,24 @@ def index() -> Union[str, Response]:
     for book in books:
         books_views.append(BookView(book, copies_for_ids[book.id]))
 
-    if sorting == SortingFields.COPIES.value:
-        books_views.sort(reverse=True, key=lambda book_view: book_view.copies)
-
-    if sorting == SortingFields.PRICE.value:
+    if sorting_field == SortingFields.COPIES.value:
         books_views.sort(
-            reverse=True,
+            reverse=(sorting_type == SortingTypes.DESC.value),
+            key=lambda book_view: book_view.copies
+            )
+
+    if sorting_field == SortingFields.PRICE.value:
+        books_views.sort(
+            reverse=(sorting_type == SortingTypes.DESC.value),
             key=lambda book_view: book_view.price or Decimal()
             )
 
     return render_template(
         'catalog/index.html',
         books=books_views,
-        sorting=sorting
+        sorting_field=sorting_field,
+        sorting_type=sorting_type
         )
-
-
-class SortingFields(Enum):
-    TITLE = 'title'
-    INSERTED_AT = 'inserted_at'
-    AUTHORS = 'authors'
-    PUBLICATION_YEAR = 'publication_year'
-    PRICE = 'price'
-    COPIES = 'copies'
 
 
 @catalog.route('/books/<int:book_id>')

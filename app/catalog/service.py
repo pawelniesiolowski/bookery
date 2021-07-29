@@ -10,5 +10,5 @@ def does_book_exist(book_id: int) -> bool:
 
 
 def get_all_books() -> List[Dict]:
-    books = repo.books_ordered_by_title()
+    books = repo.all_existing(repo.BooksSorting('title', 'asc'))
     return [book.to_basic_data() for book in books]
